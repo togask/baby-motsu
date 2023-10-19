@@ -217,13 +217,12 @@ entity "使用期間" as usage_duration {
 }
 
 user "1" -- "0..*" address
-user "1" -- "0..*" transaction : 購入者ID / 出品者ID
+user "1" -- "0..*" transaction
 product "1" -- "0..*" transaction
-transaction_status "1" -- "0..*" transaction : ステータス
+transaction_status "1" -- "0..*" transaction
 user "1" -- "0..*" point
 transaction "1" -- "0..*" point
 product "1" -- "0..*" favorite
-product "1" -- "1..10" product_image
 user "1" -- "0..*" favorite
 user "1" -- "0..*" charge
 product "1" -- "0..*" review
@@ -231,19 +230,19 @@ user "1" -- "0..*" review
 age "1" -- "0..*" product
 weight "1" -- "0..*" product
 height "1" -- "0..*" product
-major_category "1" -- "0..*" product : 大カテゴリ
-minor_category "1" -- "0..*" product : 小カテゴリ
+major_category "1" -- "0..*" product
+minor_category "1" -- "0..*" product
 bland "1" -- "0..*" product
 color "1" -- "0..*" product
-product_condition "1" -- "0..*" product : 商品の状態
-shipping_fee_responsibility "1" -- "0..*" product : 配送料の負担
-shipping_method "1" -- "0..*" product : 配送の方法
-shipping_origin_region "1" -- "0..*" product : 配送元の地域
-day_to_ship "1" -- "0..*" product : 発送までの日数
-status "1" -- "0..*" product : ステータス
-transaction "1" -- "0..*" rating
-user "1" -- "0..*" rating : 評価者ID / 被評価者ID
-role "1" -- "0..*" rating : 役割
-major_category "1" -- "0..*" minor_category : 大カテゴリID
-usage_duration "1" -- "0..*" review : 使用期間
+product_condition "1" -- "0..*" product
+shipping_fee_responsibility "1" -- "0..*" product
+shipping_method "1" -- "0..*" product
+shipping_origin_region "1" -- "0..*" product
+day_to_ship "1" -- "0..*" product
+status "1" -- "0..*" product
+transaction "1" -- "0..*" evaluation
+user "1" -- "0..*" evaluation
+role "1" -- "0..*" evaluation
+major_category "1" -- "0..*" minor_category
+usage_duration "1" -- "0..*" review
 @enduml
