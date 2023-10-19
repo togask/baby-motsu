@@ -149,7 +149,7 @@ entity "配送までの日数" as day_to_ship {
   day_to_ship : 配送までの日数 : string
 }
 
-entity "ステータス" {
+entity "ステータス" as status {
   + status_id : ID : int [PK]
   --
   status : ステータス : string
@@ -179,7 +179,7 @@ entity "身長" as height {
   height : 身長 : string
 }
 
-entity "大カテゴリ" {
+entity "大カテゴリ" as major_category {
   + major_category_id : ID : int [PK]
   --
   major_category : 大カテゴリ : string
@@ -216,9 +216,10 @@ entity "使用期間" as usage_duration {
   usage_duration : 使用期間 : string
 }
 
-user "1" -- "0..*" address
+user "1" -- "0..*" shipping_address
 user "1" -- "0..*" transaction
 product "1" -- "0..*" transaction
+product "1" -- "1..10" product_image
 transaction_status "1" -- "0..*" transaction
 user "1" -- "0..*" point
 transaction "1" -- "0..*" point
