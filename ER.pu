@@ -1,0 +1,115 @@
+@startuml ER
+entity "ユーザー" as user {
+  ユーザーID : INTEGER
+  メールアドレス : STRING
+  パスワード : STRING
+  ユーザー名 : STRING
+  プロフィール画像 : STRING
+  自己紹介文 : TEXT
+  氏名 : STRING
+  氏名カナ : STRING
+  生年月日 : DATE
+  住所 : STRING
+  ポイント : INTEGER
+}
+
+entity "住所" as address {
+  住所ID : INTEGER
+  ユーザーID : INTEGER [FK]
+  姓 : STRING
+  名 : STRING
+  セイ : STRING
+  メイ : STRING
+  郵便番号 : STRING
+  都道府県 : STRING
+  市区町村 : STRING
+  番地 : STRING
+  建物名 : STRING
+  電話番号 : STRING
+}
+
+entity "商品" as product {
+  商品ID : INTEGER
+  月齢 : INTEGER
+  体重 : FLOAT
+  身長 : FLOAT
+  カテゴリ : STRING
+  ブランド : STRING
+  色 : STRING
+  商品の状態 : STRING
+  商品名 : STRING
+  商品説明 : TEXT
+  配送料の負担 : STRING
+  配送の方法 : STRING
+  配送元の地域 : STRING
+  発送までの日数 : INTEGER
+  販売価格 : INTEGER
+  ステータス : STRING
+  出品日時 : DATETIME
+}
+
+entity "お気に入り" as favorite{
+  商品ID : INTEGER [FK]
+  ユーザーID : INTEGER [FK]
+}
+
+entity "取引" as transaction {
+  取引ID : INTEGER
+  購入者ID : INTEGER [FK]
+  出品者ID : INTEGER [FK]
+  商品ID : INTEGER [FK]
+  取引金額 : INTEGER
+  ステータス : STRING
+  取引日時 : DATETIME
+}
+
+entity "ポイント履歴" as point_history {
+  ポイント取引ID : INTEGER
+  ユーザーID : INTEGER [FK]
+  取引ID : INTEGER [FK]
+  取引日時 : DATETIME
+  変動ポイント : INTEGER
+  プラス・マイナス : STRING
+}
+
+entity "チャージ履歴" as charge_history {
+  チャージID : INTEGER
+  ユーザーID : INTEGER [FK]
+  チャージ日時 : DATETIME
+  チャージポイント : INTEGER
+}
+
+
+entity "評価" as rating {
+  評価ID : INTEGER
+  取引ID : INTEGER [FK]
+  評価者ID : INTEGER [FK]
+  被評価者ID : INTEGER [FK]
+  評価コメント : TEXT
+  評価値 : INTEGER
+  役割 : STRING
+  評価日時 : DATETIME
+}
+
+entity "長期レビュー" as long_term_review {
+  レビューID : INTEGER
+  商品ID : INTEGER [FK]
+  購入者ID : INTEGER [FK]
+  使用感コメント : TEXT
+  使用期間 : STRING
+  レビュー日時 : DATETIME
+}
+
+user -- address
+user -- favorite
+favorite -- product
+user -- transaction
+product -- transaction
+user -- point_history
+transaction -- point_history
+user -- charge_history
+transaction -- rating
+user -- rating
+product -- long_term_review
+user -- long_term_review
+@enduml
