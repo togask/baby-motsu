@@ -33,7 +33,7 @@ entity "配送先" as shipping_address {
 
 entity "取引" as transaction {
   + transaction_id : 取引ID
-  -- 
+  --
   buyer_id : 購入者ID
   seller_id : 出品者ID
   product_id : 商品ID
@@ -108,7 +108,7 @@ entity "商品" as product {
 entity "商品画像" as product_image {
   + product_image_id : 画像ID
   + product_id : 商品ID
-  -- 
+  --
   path : 画像パス
   order : 並び順
 }
