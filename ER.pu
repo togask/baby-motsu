@@ -1,115 +1,249 @@
-@startuml ER
+@startuml
+
 entity "ユーザー" as user {
-  ユーザーID : INTEGER
-  メールアドレス : STRING
-  パスワード : STRING
-  ユーザー名 : STRING
-  プロフィール画像 : STRING
-  自己紹介文 : TEXT
-  氏名 : STRING
-  氏名カナ : STRING
-  生年月日 : DATE
-  住所 : STRING
-  ポイント : INTEGER
+  + user_id : ユーザーID : int [PK]
+  --
+  email : メールアドレス : varchar(255)
+  password : パスワード : varchar(255)
+  nickname : ユーザー名 : varchar(100)
+  profile_image_path : プロフィール画像パス : varchar(500)
+  introduce : 自己紹介文 : text
+  name : 氏名 : varchar(100)
+  name_kana : 氏名カナ : varchar(100)
+  birthday : 生年月日 : date
+  address : 住所 : varchar(255)
+  point : ポイント : int
 }
 
-entity "住所" as address {
-  住所ID : INTEGER
-  ユーザーID : INTEGER [FK]
-  姓 : STRING
-  名 : STRING
-  セイ : STRING
-  メイ : STRING
-  郵便番号 : STRING
-  都道府県 : STRING
-  市区町村 : STRING
-  番地 : STRING
-  建物名 : STRING
-  電話番号 : STRING
-}
-
-entity "商品" as product {
-  商品ID : INTEGER
-  月齢 : INTEGER
-  体重 : FLOAT
-  身長 : FLOAT
-  カテゴリ : STRING
-  ブランド : STRING
-  色 : STRING
-  商品の状態 : STRING
-  商品名 : STRING
-  商品説明 : TEXT
-  配送料の負担 : STRING
-  配送の方法 : STRING
-  配送元の地域 : STRING
-  発送までの日数 : INTEGER
-  販売価格 : INTEGER
-  ステータス : STRING
-  出品日時 : DATETIME
-}
-
-entity "お気に入り" as favorite{
-  商品ID : INTEGER [FK]
-  ユーザーID : INTEGER [FK]
+entity "配送先" as shipping_address {
+  + shipping_address_id : 配送先ID : int [PK]
+  --
+  user_id : ユーザーID : int [FK user]
+  sei : 姓 : varchar(50)
+  mei : 名 : varchar(50)
+  sei_kana : セイ : varchar(50)
+  mei_kana : メイ : varchar(50)
+  post_code : 郵便番号 : varchar(10)
+  prefectures : 都道府県 : varchar(20)
+  municipalities : 市区町村 : varchar(100)
+  street : 番地 : varchar(100)
+  building_name : 建物名 : varchar(150)
+  tel : 電話番号 : varchar(15)
 }
 
 entity "取引" as transaction {
-  取引ID : INTEGER
-  購入者ID : INTEGER [FK]
-  出品者ID : INTEGER [FK]
-  商品ID : INTEGER [FK]
-  取引金額 : INTEGER
-  ステータス : STRING
-  取引日時 : DATETIME
+  + transaction_id : 取引ID : int [PK]
+  -- 
+  buyer_id : 購入者ID : int [FK user]
+  seller_id : 出品者ID : int [FK user]
+  product_id : 商品ID : int [FK product]
+  status_id : ステータス : int [FK transaction_status]
+  amount : 取引金額 : int
+  datetime : 取引日時 : datetime
 }
 
-entity "ポイント履歴" as point_history {
-  ポイント取引ID : INTEGER
-  ユーザーID : INTEGER [FK]
-  取引ID : INTEGER [FK]
-  取引日時 : DATETIME
-  変動ポイント : INTEGER
-  プラス・マイナス : STRING
+entity "ポイント" as point {
+  + point_id : ポイントID : int [PK]
+  --
+  user_id : ユーザーID : int [FK user]
+  transaction_id : 取引ID : int [FK transaction]
+  variable_point : 変動ポイント : int
+  plus_minus : プラス・マイナス : varchar(10)
+  datetime : 取引日時 : datetime
 }
 
-entity "チャージ履歴" as charge_history {
-  チャージID : INTEGER
-  ユーザーID : INTEGER [FK]
-  チャージ日時 : DATETIME
-  チャージポイント : INTEGER
+entity "お気に入り" as favorite {
+  + product_id : 商品ID : int [PK][FK product]
+  + user_id : ユーザーID : int [PK][FK user]
+  --
+  datetime : 登録日時 : datetime
 }
 
-
-entity "評価" as rating {
-  評価ID : INTEGER
-  取引ID : INTEGER [FK]
-  評価者ID : INTEGER [FK]
-  被評価者ID : INTEGER [FK]
-  評価コメント : TEXT
-  評価値 : INTEGER
-  役割 : STRING
-  評価日時 : DATETIME
+entity "取引ステータス" as transaction_status {
+  + id : ID : int [PK]
+  --
+  status : 取引ステータス : string
 }
 
-entity "長期レビュー" as long_term_review {
-  レビューID : INTEGER
-  商品ID : INTEGER [FK]
-  購入者ID : INTEGER [FK]
-  使用感コメント : TEXT
-  使用期間 : STRING
-  レビュー日時 : DATETIME
+entity "チャージ" as charge {
+  + charge_id : チャージID : int [PK]
+  --
+  user_id : ユーザーID int [FK user]
+  point : チャージポイント : int
+  datetime : チャージ日時 : datetime
 }
 
-user -- address
-user -- favorite
-favorite -- product
-user -- transaction
-product -- transaction
-user -- point_history
-transaction -- point_history
-user -- charge_history
-transaction -- rating
-user -- rating
-product -- long_term_review
-user -- long_term_review
+entity "レビュー" as review {
+  + review_id : レビューID : int [PK]
+  --
+  product_id : 商品ID : int [FK product]
+  buyer_id : 購入者ID : int [FK user]
+  usage_duration_id : 使用期間 : int [FK](usage_duration)
+  comment : 使用感コメント : text
+  datetime : レビュー日時 : datetime
+}
+
+entity "商品" as product {
+  + product_id : 商品ID : int [PK]
+  --
+  age_id : 月齢 : int [FK age]
+  weight_id : 体重 : int [FK weight]
+  height_id : 身長 : int [FK height]
+  major_category_id : 大カテゴリ : int [FK major_category]
+  minor_category_id : 小カテゴリ : int [FK minor_category]
+  bland_id : ブランド : int [FK bland]
+  color_id : 色 : int [FK color]
+  product_condition_id : 商品の状態 : int [FK product_condition]
+  shipping_fee_responsibility_id : 配送料の負担 : int [FK shipping_fee_responsibility]
+  shipping_method_id : 配送の方法 : int [FK shipping_method]
+  shipping_origin_region : 配送元の地域 : int [FK shipping_origin_region]
+  day_to_ship_id : 発送までの日数 : int [FK day_to_ship]
+  status_id : ステータス : int [FK status]
+  product_name : 商品名 : varchar(100)
+  product_description : 商品説明 : text
+  price : 販売価格 : int
+  datetime : 出品日時 : datetime
+}
+
+entity "商品画像" as product_image {
+  + product_image_id : 画像ID : int [PK]
+  + product_id : 商品ID : int [FK product]
+  -- 
+  path : 画像パス : varchar(500)
+  order : 並び順 : int
+}
+
+entity "評価" as evaluation {
+  + evalution_id : 評価ID : int [PK]
+  --
+  transaction_id : 取引ID : int [FK transaction]
+  evaluator_id : 評価者ID : int [FK user]
+  evaluatee_id : 被評価者ID : int [FK user]
+  role_id : 役割 : int [FK role]
+  comment : 評価コメント : text
+  score : 評価値 : int
+  datetime : 評価日時 : datetime
+}
+
+entity "配送料の負担" as shipping_fee_responsibility {
+  + shipping_fee_responsibility_id : ID : int [PK]
+  --
+  shipping_fee_resposibility : 配送料の負担 : string
+}
+
+entity "配送の方法" as shipping_method {
+  + shipping_method_id : ID : int [PK]
+  --
+  shipping_method : 配送の方法 : string
+}
+
+entity "配送元の地域" as shipping_origin_region {
+  + shipping_origin_region_id : ID : int [PK]
+  --
+  shipping_origin_region : 配送元の地域 : string
+}
+
+entity "配送までの日数" as day_to_ship {
+  + day_to_ship_id : ID : int [PK]
+  --
+  day_to_ship : 配送までの日数 : string
+}
+
+entity "ステータス" {
+  + status_id : ID : int [PK]
+  --
+  status : ステータス : string
+}
+
+entity "役割" as role {
+  + role_id : ID : int [PK]
+  --
+  role : 役割 : string
+}
+
+entity "月齢" as age {
+  + age_id : ID : int [PK]
+  --
+  age : 月齢 : string
+}
+
+entity "体重" as weight {
+  + weight_id : ID : int [PK]
+  --
+  weight : 体重 : string
+}
+
+entity "身長" as height {
+  + height_id : ID : int [PK]
+  --
+  height : 身長 : string
+}
+
+entity "大カテゴリ" {
+  + major_category_id : ID : int [PK]
+  --
+  major_category : 大カテゴリ : string
+}
+
+entity "小カテゴリ" as minor_category {
+  + minor_category_id : ID : int [PK]
+  --
+  major_category_id : 大カテゴリID : int [FK major_category]
+  minor_category : 小カテゴリ : string
+}
+
+entity "ブランド" as bland {
+  + bland_id : ID : int [PK]
+  --
+  bland : ブランド : string
+}
+
+entity "色" as color {
+  + color_id : ID : int [PK]
+  --
+  color : 色 : string
+}
+
+entity "商品の状態" as product_condition {
+  + product_condition_id : ID : int [PK]
+  --
+  product_condition : 商品の状態 : string
+}
+
+entity "使用期間" as usage_duration {
+  + usage_duration_id : ID : int [PK]
+  --
+  usage_duration : 使用期間 : string
+}
+
+user "1" -- "0..*" address
+user "1" -- "0..*" transaction : 購入者ID / 出品者ID
+product "1" -- "0..*" transaction
+transaction_status "1" -- "0..*" transaction : ステータス
+user "1" -- "0..*" point
+transaction "1" -- "0..*" point
+product "1" -- "0..*" favorite
+product "1" -- "1..10" product_image
+user "1" -- "0..*" favorite
+user "1" -- "0..*" charge
+product "1" -- "0..*" review
+user "1" -- "0..*" review
+age "1" -- "0..*" product
+weight "1" -- "0..*" product
+height "1" -- "0..*" product
+major_category "1" -- "0..*" product : 大カテゴリ
+minor_category "1" -- "0..*" product : 小カテゴリ
+bland "1" -- "0..*" product
+color "1" -- "0..*" product
+product_condition "1" -- "0..*" product : 商品の状態
+shipping_fee_responsibility "1" -- "0..*" product : 配送料の負担
+shipping_method "1" -- "0..*" product : 配送の方法
+shipping_origin_region "1" -- "0..*" product : 配送元の地域
+day_to_ship "1" -- "0..*" product : 発送までの日数
+status "1" -- "0..*" product : ステータス
+transaction "1" -- "0..*" rating
+user "1" -- "0..*" rating : 評価者ID / 被評価者ID
+role "1" -- "0..*" rating : 役割
+major_category "1" -- "0..*" minor_category : 大カテゴリID
+usage_duration "1" -- "0..*" review : 使用期間
 @enduml
