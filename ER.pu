@@ -37,7 +37,7 @@ entity "取引" as transaction {
   buyer_id : 購入者ID
   seller_id : 出品者ID
   product_id : 商品ID
-  status_id : ステータス
+  transaction_status_id : 取引ステータス
   amount : 取引金額
   datetime : 取引日時
 }
