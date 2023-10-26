@@ -125,6 +125,18 @@ entity "評価" as evaluation {
   datetime : 評価日時
 }
 
+entity "お知らせ" as notice {
+  + notice_id : ID
+  --
+  user_id : ユーザーID
+  transaction_id : 取引ID
+  type : 通知のタイプ
+  is_shipment_completed : 発送が完了したかどうか
+  is_receipt_completed : 受け取りが完了したかどうか
+  is_rating_completed : 評価が完了したかどうか
+  datetime : 通知日時
+}
+
 entity "配送料の負担" as shipping_fee_responsibility {
   + shipping_fee_responsibility_id : ID
   --
@@ -246,4 +258,7 @@ user "1" -- "0..*" evaluation
 role "1" -- "0..*" evaluation
 major_category "1" -- "0..*" minor_category
 usage_duration "1" -- "0..*" review
+user "1" -- "0..*" notice
+transaction "1" -- "0..*" notice
+product "1" -- "0..*" notice
 @enduml
