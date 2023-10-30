@@ -37,7 +37,7 @@ entity "取引" as transaction {
   buyer_id : 購入者ID
   seller_id : 出品者ID
   product_id : 商品ID
-  transaction_status_id : 取引ステータス
+  transaction_status_id : 取引ステータスID
   amount : 取引金額
   datetime : 取引日時
 }
@@ -48,7 +48,7 @@ entity "ポイント" as point {
   user_id : ユーザーID
   transaction_id : 取引ID
   variable_point : 変動ポイント
-  plus_minus : プラス・マイナス
+  is_plus : プラスかどうか
   datetime : 取引日時
 }
 
@@ -57,12 +57,6 @@ entity "お気に入り" as favorite {
   + user_id : ユーザーID
   --
   datetime : 登録日時
-}
-
-entity "取引ステータス" as transaction_status {
-  + id : ID
-  --
-  status : 取引ステータス
 }
 
 entity "チャージ" as charge {
@@ -78,7 +72,7 @@ entity "レビュー" as review {
   --
   product_id : 商品ID
   buyer_id : 購入者ID
-  usage_duration_id : 使用期間
+  usage_duration_id : 使用期間ID
   comment : 使用感コメント
   datetime : レビュー日時
 }
@@ -86,19 +80,19 @@ entity "レビュー" as review {
 entity "商品" as product {
   + product_id : 商品ID
   --
-  age_id : 月齢
-  weight_id : 体重
-  height_id : 身長
-  major_category_id : 大カテゴリ
-  minor_category_id : 小カテゴリ
-  bland_id : ブランド
-  color_id : 色
-  product_condition_id : 商品の状態
-  shipping_fee_responsibility_id : 配送料の負担
-  shipping_method_id : 配送の方法
-  shipping_origin_region : 配送元の地域
-  day_to_ship_id : 発送までの日数
-  status_id : ステータス
+  age_id : 月齢ID
+  weight_id : 体重ID
+  height_id : 身長ID
+  major_category_id : 大カテゴリID
+  minor_category_id : 小カテゴリID
+  bland_id : ブランドID
+  color_id : 色ID
+  product_condition_id : 商品の状態ID
+  shipping_fee_responsibility_id : 配送料の負担ID
+  shipping_method_id : 配送の方法ID
+  shipping_origin_region_id : 配送元の地域ID
+  day_to_ship_id : 発送までの日数ID
+  status_id : ステータスID
   product_name : 商品名
   product_description : 商品説明
   price : 販売価格
@@ -119,7 +113,7 @@ entity "評価" as evaluation {
   transaction_id : 取引ID
   evaluator_id : 評価者ID
   evaluatee_id : 被評価者ID
-  role_id : 役割
+  is_seller : 出品者かどうか
   comment : 評価コメント
   score : 評価値
   datetime : 評価日時
@@ -130,65 +124,9 @@ entity "お知らせ" as notice {
   --
   user_id : ユーザーID
   transaction_id : 取引ID
-  type : 通知のタイプ
-  is_shipment_completed : 発送が完了したかどうか
-  is_receipt_completed : 受け取りが完了したかどうか
-  is_rating_completed : 評価が完了したかどうか
+  type_id : 通知のタイプID
+  notice_status_id : 通知ステータスID
   datetime : 通知日時
-}
-
-entity "配送料の負担" as shipping_fee_responsibility {
-  + shipping_fee_responsibility_id : ID
-  --
-  shipping_fee_resposibility : 配送料の負担
-}
-
-entity "配送の方法" as shipping_method {
-  + shipping_method_id : ID
-  --
-  shipping_method : 配送の方法
-}
-
-entity "配送元の地域" as shipping_origin_region {
-  + shipping_origin_region_id : ID
-  --
-  shipping_origin_region : 配送元の地域
-}
-
-entity "配送までの日数" as day_to_ship {
-  + day_to_ship_id : ID
-  --
-  day_to_ship : 配送までの日数
-}
-
-entity "ステータス" as status {
-  + status_id : ID
-  --
-  status : ステータス
-}
-
-entity "役割" as role {
-  + role_id : ID
-  --
-  role : 役割
-}
-
-entity "月齢" as age {
-  + age_id : ID
-  --
-  age : 月齢
-}
-
-entity "体重" as weight {
-  + weight_id : ID
-  --
-  weight : 体重
-}
-
-entity "身長" as height {
-  + height_id : ID
-  --
-  height : 身長
 }
 
 entity "大カテゴリ" as major_category {
@@ -204,35 +142,18 @@ entity "小カテゴリ" as minor_category {
   minor_category : 小カテゴリ
 }
 
-entity "ブランド" as bland {
-  + bland_id : ID
+entity "コードマスタ" as code_master {
+  + code_id : コードID
   --
-  bland : ブランド
-}
-
-entity "色" as color {
-  + color_id : ID
-  --
-  color : 色
-}
-
-entity "商品の状態" as product_condition {
-  + product_condition_id : ID
-  --
-  product_condition : 商品の状態
-}
-
-entity "使用期間" as usage_duration {
-  + usage_duration_id : ID
-  --
-  usage_duration : 使用期間
+  type : タイプ
+  value : 値
+  description : 説明
 }
 
 user "1" -- "0..*" shipping_address
 user "1" -- "0..*" transaction
 product "1" -- "0..*" transaction
 product "1" -- "1..10" product_image
-transaction_status "1" -- "0..*" transaction
 user "1" -- "0..*" point
 transaction "1" -- "0..*" point
 product "1" -- "0..*" favorite
@@ -240,25 +161,18 @@ user "1" -- "0..*" favorite
 user "1" -- "0..*" charge
 product "1" -- "0..*" review
 user "1" -- "0..*" review
-age "1" -- "0..*" product
-weight "1" -- "0..*" product
-height "1" -- "0..*" product
 major_category "1" -- "0..*" product
 minor_category "1" -- "0..*" product
-bland "1" -- "0..*" product
-color "1" -- "0..*" product
-product_condition "1" -- "0..*" product
-shipping_fee_responsibility "1" -- "0..*" product
-shipping_method "1" -- "0..*" product
-shipping_origin_region "1" -- "0..*" product
-day_to_ship "1" -- "0..*" product
-status "1" -- "0..*" product
 transaction "1" -- "0..*" evaluation
 user "1" -- "0..*" evaluation
-role "1" -- "0..*" evaluation
 major_category "1" -- "0..*" minor_category
-usage_duration "1" -- "0..*" review
 user "1" -- "0..*" notice
 transaction "1" -- "0..*" notice
 product "1" -- "0..*" notice
+major_category "1" -- "0..*" minor_category
+product -- code_master
+user -- code_master
+transaction -- code_master
+review -- code_master
+notice -- code_master
 @enduml
