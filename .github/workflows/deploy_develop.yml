@@ -20,3 +20,4 @@ jobs:
           script: |
             cd ${{ secrets.SERVER_DEPLOY_DEVELOP_DIR }}
             git pull origin develop
+          DEBUG: true
