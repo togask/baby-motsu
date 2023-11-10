@@ -59,6 +59,13 @@ entity "お気に入り" as favorite {
   datetime : 登録日時
 }
 
+entity "閲覧" as productviews {
+  + product_id : 商品ID
+  + user_id : ユーザーID
+  --
+  datetime : 閲覧日時
+}
+
 entity "チャージ" as charge {
   + charge_id : チャージID
   --
@@ -158,6 +165,8 @@ user "1" -- "0..*" point
 transaction "1" -- "0..*" point
 product "1" -- "0..*" favorite
 user "1" -- "0..*" favorite
+product "1" -- "0..*" productviews
+user "1" -- "0..*" productviews
 user "1" -- "0..*" charge
 product "1" -- "0..*" review
 user "1" -- "0..*" review
