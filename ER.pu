@@ -183,7 +183,10 @@ product "1" -- "0..*" transaction
 product "1" -- "0..*" transaction
 product "1" -- "1..10" product_image
 product "1" -- "0..*" favorite
+user "1" -- "0..*" favorite
 product "1" -- "0..*" productviews
+user "1" -- "0..*" productviews
+user "1" -- "0..*" charge
 product "1" -- "0..*" review
 product "1" -- "0..*" notice
 major_category "1" -- "0..*" product
