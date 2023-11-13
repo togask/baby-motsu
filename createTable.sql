@@ -14,6 +14,7 @@ CREATE TABLE USER (
   nickname VARCHAR(100) NOT NULL,
   profile_image_path VARCHAR(500) DEFAULT 'default_profile.png',
   introduce TEXT,
+  active_shipping_address_id INT FOREIGN KEY REFERENCES SHIPPING_ADDRESS(shipping_address_id),
   name VARCHAR(100),
   name_kana VARCHAR(100),
   birthday DATE,
