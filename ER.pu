@@ -8,6 +8,7 @@ entity "ユーザー" as user {
   nickname : ユーザー名
   profile_image_path : プロフィール画像パス
   introduce : 自己紹介文
+  active_shipping_address_id : アクティブ配送先ID
   name : 氏名
   name_kana : 氏名カナ
   birthday : 生年月日
