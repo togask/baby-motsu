@@ -32,6 +32,15 @@ entity "配送先" as shipping_address {
   tel : 電話番号
 }
 
+entity "検索履歴" as search_history {
+  + id : ID
+  --
+  user_id : ユーザーID
+  search_query : 検索クエリ
+  search_params : 検索パラメータ
+  datetime : 検索日時
+}
+
 entity "取引" as transaction {
   + transaction_id : 取引ID
   --
