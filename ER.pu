@@ -171,6 +171,7 @@ user "1" -- "0..*" shipping_address
 user "1" -- "0..*" transaction
 product "1" -- "0..*" transaction
 product "1" -- "1..10" product_image
+user "1" -- "0..*" search_history
 user "1" -- "0..*" point
 transaction "1" -- "0..*" point
 product "1" -- "0..*" favorite
