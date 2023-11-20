@@ -1,0 +1,352 @@
+openapi: 3.0.0
+info:
+  title: baby-motsu API
+  version: 1.0.0
+servers:
+  - url: http://api.example.com/v1
+paths:
+  /api/users/{userId}/mypage:
+    get:
+      summary: マイページ情報（プロフィール、評価、出品商品一覧）を取得する。
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        '200':
+          $ref: '#/components/responses/MypageResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /api/users/personal:
+    get:
+      summary: 個人情報（氏名、生年月日、住所）を取得する。
+      parameters:
+        - $ref: '#/components/parameters/SessionIdHeader'
+      responses:
+        '200':
+          $ref: '#/components/responses/PersonalUserInfoResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+    patch:
+      summary: 個人情報（氏名、生年月日、住所）の更新する。
+      parameters:
+        - $ref: '#/components/parameters/SessionIdHeader'
+      requestBody:
+        $ref: '#/components/requestBodies/PersonalUserInfoRequest'
+      responses:
+        '204':
+          $ref: '#/components/responses/NoContentResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+
+  /api/users/profile:
+    get:
+      summary: プロフィール情報（ニックネーム、プロフィール画像、自己紹介）を取得する。
+      parameters:
+        - $ref: '#/components/parameters/SessionIdHeader'
+      responses:
+        '200':
+          $ref: '#/components/responses/ProfileUserInfoResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+    patch:
+      summary: プロフィール情報（ニックネーム、プロフィール画像、自己紹介）の更新する。
+      parameters:
+        - $ref: '#/components/parameters/SessionIdHeader'
+      requestBody:
+        $ref: '#/components/requestBodies/ProfileUserInfoRequest'
+      responses:
+        '204':
+          $ref: '#/components/responses/NoContentResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  
+  /api/auth/login:
+    post:
+      summary: ユーザーがメールアドレスとパスワードを使用してログインする。
+      requestBody:
+        $ref: '#/components/requestBodies/LoginRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/LoginResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  
+  /api/auth/logout:
+    post:
+      summary: ユーザーが現在のセッションからログアウトする。
+      responses:
+        '204':
+          $ref: '#/components/responses/NoContentResponse'
+        '401':
+          $ref: '#/components/responses/BadRequestError'
+
+  /api/auth/signup:
+    post:
+      summary: 新しいユーザーがアカウントを作成する。
+      requestBody:
+        $ref: '#/components/requestBodies/SignupRequest'
+      responses:
+        '201':
+          $ref: '#/components/responses/LoginResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /api/auth/update-credentials:
+    patch:
+      summary: ユーザーがメールアドレスとパスワードを同時に更新する。
+      requestBody:
+        $ref: '#/components/requestBodies/CredentialRequest'
+      responses:
+        '204':
+          $ref: '#/components/responses/NoContentResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  # 他のエンドポイントも同様に定義...
+
+components:
+  parameters:
+    UserId:
+      description: ユーザーID
+      name: userId
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/userId'
+
+    SessionIdHeader:
+      description: セッションID
+      in: header
+      name: sessionId
+      required: true
+      schema:
+        $ref: '#/components/schemas/sessionId'
+
+  requestBodies: 
+    PersonalUserInfoRequest:
+      description: 個人情報更新情報
+      required: true
+      content:
+        application/json: 
+          schema: 
+            $ref: '#/components/schemas/personalUserInfo'
+
+    ProfileUserInfoRequest:
+      description: プロフィール情報更新情報
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/profileUserInfo'
+    
+    LoginRequest:
+      description: ログインリクエスト情報
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/loginInfo'
+    
+    SignupRequest:
+      description: サインアップリクエスト情報
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/signupInfo'
+
+    CredentialRequest:
+      description: メールアドレス・パスワード更新情報
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/credentialRequestInfo'
+
+  responses: 
+    MypageResponse:
+      description: プロフィール情報
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              userId:
+                $ref: '#/components/schemas/userId'
+              profile:
+                $ref: '#/components/schemas/profileUserInfoWithRating'
+              products:
+                $ref: '#/components/schemas/products'
+    
+    PersonalUserInfoResponse:
+      description: プロフィール情報
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/personalUserInfo'
+
+    ProfileUserInfoResponse:
+      description: プロフィール情報
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/profileUserInfo'
+
+    LoginResponse:
+      description: ログイン成功情報
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/loginSuccessInfo'
+    
+    NoContentResponse:
+      description: リクエストが成功しましたが、返すべき内容はありません(204)
+
+    BadRequestError:
+      description: リクエストが不正または間違っています(400)
+
+    UnauthorizedError:
+      description: 認証に失敗しました(401)
+    
+    NotFoundError:
+      description: リソースが見つからない(404)
+
+    # 他のスキーマも同様に定義...
+    
+  schemas:
+    # 共通のデータ構造
+    userId:
+      type: integer
+      format: int32
+      description: ユーザーID
+
+    sessionId:
+      type: string
+      description: セッションID
+
+    nickname:
+      type: string
+      description: ニックネーム
+
+    password:
+      type: string
+      format: password
+      description: パスワード
+    
+    email:
+      type: string
+      format: email
+      description: メールアドレス
+
+    personalUserInfo:
+      type: object
+      properties:
+        name:
+          type: string
+          description: 氏名
+        nameKana:
+          type: string
+          description: 氏名(カタカナ)
+        birthday:
+          type: string
+          format: date
+          description: 誕生日
+        address:
+          type: string
+          description: 住所
+
+    profileUserInfo:
+        type: object
+        properties:
+          profileImage:
+            type: string
+            description: プロフィール画像パス
+          nickname:
+            $ref: '#/components/schemas/nickname'
+          introduce:
+            type: string
+            description: 自己紹介
+    
+    averageRating:
+      type: object
+      properties:
+        averageRating:
+          type: number
+          format: float
+          description: 平均取引評価値
+
+    profileUserInfoWithRating:
+      allOf: 
+        - $ref: '#/components/schemas/profileUserInfo'
+        - $ref: '#/components/schemas/averageRating'
+    
+    loginInfo:
+      type: object
+      properties:
+        email:
+          $ref: '#/components/schemas/email'
+        password:
+          $ref: '#/components/schemas/password'
+    
+    loginSuccessInfo:
+      type: object
+      properties:
+        userId:
+          $ref: '#/components/schemas/userId'
+        sessionId:
+          $ref: '#/components/schemas/sessionId'
+    
+    signupInfo:
+      allOf:
+        - $ref: '#/components/schemas/loginInfo'
+        - type: object
+          properties:
+            nickname:
+              $ref: '#/components/schemas/nickname'
+    
+    credentialRequestInfo:
+      type: object
+      properties:
+        currentPassword:
+          $ref: '#/components/schemas/password'
+          description: 現在のパスワード
+        newEmail:
+          $ref: '#/components/schemas/email'
+          description: 更新用メールアドレス
+        newPassword:
+          $ref: '#/components/schemas/password'
+          description: 更新用パスワード
+        confirmNewPassword:
+          $ref: '#/components/schemas/password'
+          description: 更新用パスワード（再確認）
+
+    product:
+      type: object
+      properties:
+        productId:
+          type: integer
+          format: int64
+          description: 商品のID
+        productName:
+          type: string
+          description: 商品名
+        productImagePath:
+          type: string
+          description: 商品画像のパス
+        price:
+          type: integer
+          description: 価格
+        isSold:
+          type: boolean
+          description: 商品が売れたかどうか
+        date:
+          type: string
+          format: date-time
+          description: 出品時刻
+      
+    products:
+      type: array
+      items:
+        $ref: '#/components/schemas/product'
