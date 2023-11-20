@@ -104,6 +104,69 @@ paths:
         '404':
           $ref: '#/components/responses/NotFoundError'
 
+  /api/shipping-addresses/list:
+    get:
+      summary: ユーザーの登録されているすべての配送先を取得する。
+      parameters:
+        - $ref: '#/components/parameters/SessionIdHeader'
+      responses:
+        '200':
+          $ref: '#/components/responses/AllShippingAddressesResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /api/shipping-addresses:
+    post:
+      summary: 新しい配送先を追加する。
+      parameters:
+        - $ref: '#/components/parameters/SessionIdHeader'
+      requestBody:
+        $ref: '#/components/requestBodies/ShippingAddressRequest'
+      responses:
+        '201':
+          $ref: '#/components/responses/CreatedResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /api/shipping-addresses/{shippingAddressId}:
+    patch:
+      summary: 既存の配送先情報を更新する。
+      parameters:
+        - $ref: '#/components/parameters/SessionIdHeader'
+        - $ref: '#/components/parameters/ShippingAddressId'
+      requestBody:
+        $ref: '#/components/requestBodies/ShippingAddressRequest'
+      responses:
+        '204':
+          $ref: '#/components/responses/NoContentResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+    delete:
+      summary: 既存の配送先情報を削除する。
+      parameters:
+        - $ref: '#/components/parameters/SessionIdHeader'
+        - $ref: '#/components/parameters/ShippingAddressId'
+      responses:
+        '204':
+          $ref: '#/components/responses/NoContentResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+  
+  /api/shipping-addresses/active:
+    get:
+      summary: アクティブな配送先を取得する。
+      parameters:
+        - $ref: '#/components/parameters/SessionIdHeader'
+      responses:
+        '200':
+          $ref: '#/components/responses/ActiveShippingAddressesResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
   # 他のエンドポイントも同様に定義...
 
 components:
@@ -115,6 +178,14 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/userId'
+    
+    ShippingAddressId:
+      description: 配送先ID
+      name: shippingAddressId
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/shippingAddressId'
 
     SessionIdHeader:
       description: セッションID
@@ -165,6 +236,13 @@ components:
           schema:
             $ref: '#/components/schemas/credentialRequestInfo'
 
+    ShippingAddressRequest:
+      description: 新規配送先情報
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/shippingAddress'
   responses: 
     MypageResponse:
       description: プロフィール情報
@@ -201,6 +279,23 @@ components:
           schema:
             $ref: '#/components/schemas/loginSuccessInfo'
     
+    AllShippingAddressesResponse:
+      description: ユーザーの登録されているすべての配送先情報
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/shippingAddresses'
+
+    ActiveShippingAddressesResponse:
+      description: ユーザーの登録されているアクティブ配送先情報
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/shippingAddressWithId'
+
+    CreatedResponse:
+      description: リクエストに成功して、正常に作成されました(201)
+
     NoContentResponse:
       description: リクエストが成功しましたが、返すべき内容はありません(204)
 
@@ -239,6 +334,11 @@ components:
       type: string
       format: email
       description: メールアドレス
+
+    shippingAddressId:
+      type: integer
+      format: int32
+      description: 配送先ID
 
     personalUserInfo:
       type: object
@@ -321,6 +421,63 @@ components:
         confirmNewPassword:
           $ref: '#/components/schemas/password'
           description: 更新用パスワード（再確認）
+
+    shippingAddress:
+      type: object
+      properties:
+        sei:
+          type: string
+          description: 姓
+        mei:
+          type: string
+          description: 名
+        seiKana:
+          type: string
+          description: 姓のカナ
+        meiKana:
+          type: string
+          description: 名のカナ
+        postCode:
+          type: string
+          description: 郵便番号
+        prefectures:
+          type: string
+          description: 都道府県
+        municipalities:
+          type: string
+          description: 市区町村
+        street:
+          type: string
+          description: 番地
+        buildingName:
+          type: string
+          description: 建物名
+        tel:
+          type: string
+          description: 電話番号
+      required:
+        - sei
+        - mei
+        - seiKana
+        - meiKana
+        - postCode
+        - prefectures
+        - municipalities
+        - street
+        - tel
+
+    shippingAddressWithId:
+      type: object
+      properties:
+        shippingAddressId:
+            $ref: '#/components/schemas/shippingAddressId'
+        shippingAddress:
+          $ref: '#/components/schemas/shippingAddress'
+  
+    shippingAddresses:
+      type: array
+      items:
+        $ref: '#/components/schemas/shippingAddressWithId'
 
     product:
       type: object
