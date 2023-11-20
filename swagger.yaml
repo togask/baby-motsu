@@ -9,7 +9,7 @@ paths:
     get:
       summary: マイページ情報（プロフィール、評価、出品商品一覧）を取得する。
       parameters:
-        - $ref: '#/components/parameters/UserId'
+        - $ref: '#/components/parameters/UserIdInPath'
       responses:
         '200':
           $ref: '#/components/responses/MypageResponse'
@@ -137,7 +137,7 @@ paths:
       summary: 既存の配送先情報を更新する。
       parameters:
         - $ref: '#/components/parameters/SessionIdInHeader'
-        - $ref: '#/components/parameters/ShippingAddressId'
+        - $ref: '#/components/parameters/ShippingAddressIdInPath'
       requestBody:
         $ref: '#/components/requestBodies/ShippingAddressRequest'
       responses:
@@ -151,7 +151,7 @@ paths:
       summary: 既存の配送先情報を削除する。
       parameters:
         - $ref: '#/components/parameters/SessionIdInHeader'
-        - $ref: '#/components/parameters/ShippingAddressId'
+        - $ref: '#/components/parameters/ShippingAddressIdInPath'
       responses:
         '204':
           $ref: '#/components/responses/NoContentResponse'
@@ -175,7 +175,7 @@ paths:
 
 components:
   parameters:
-    UserId:
+    UserIdInPath:
       description: ユーザーID
       name: userId
       in: path
@@ -183,7 +183,7 @@ components:
       schema:
         $ref: '#/components/schemas/userId'
     
-    ShippingAddressId:
+    ShippingAddressIdInPath:
       description: 配送先ID
       name: shippingAddressId
       in: path
