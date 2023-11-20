@@ -76,6 +76,8 @@ paths:
   /api/auth/logout:
     post:
       summary: ユーザーが現在のセッションからログアウトする。
+      parameters:
+        - $ref: '#/components/parameters/SessionIdInHeader'
       responses:
         '204':
           $ref: '#/components/responses/NoContentResponse'
@@ -96,6 +98,8 @@ paths:
   /api/auth/update-credentials:
     patch:
       summary: ユーザーがメールアドレスとパスワードを同時に更新する。
+      parameters:
+        - $ref: '#/components/parameters/SessionIdInHeader'
       requestBody:
         $ref: '#/components/requestBodies/CredentialRequest'
       responses:
