@@ -61,7 +61,7 @@ paths:
           $ref: '#/components/responses/NoContentResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
-  
+
   /api/auth/login:
     post:
       summary: ユーザーがメールアドレスとパスワードを使用してログインする。
@@ -72,7 +72,7 @@ paths:
           $ref: '#/components/responses/LoginResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
-  
+
   /api/auth/logout:
     post:
       summary: ユーザーが現在のセッションからログアウトする。
@@ -140,7 +140,7 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/profileUserInfo'
-    
+
     LoginRequest:
       description: ログインリクエスト情報
       required: true
@@ -148,7 +148,7 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/loginInfo'
-    
+
     SignupRequest:
       description: サインアップリクエスト情報
       required: true
@@ -214,7 +214,7 @@ components:
       description: リソースが見つからない(404)
 
     # 他のスキーマも同様に定義...
-    
+
   schemas:
     # 共通のデータ構造
     userId:
@@ -234,7 +234,7 @@ components:
       type: string
       format: password
       description: パスワード
-    
+
     email:
       type: string
       format: email
@@ -268,7 +268,7 @@ components:
           introduce:
             type: string
             description: 自己紹介
-    
+
     averageRating:
       type: object
       properties:
@@ -281,7 +281,7 @@ components:
       allOf: 
         - $ref: '#/components/schemas/profileUserInfo'
         - $ref: '#/components/schemas/averageRating'
-    
+
     loginInfo:
       type: object
       properties:
@@ -289,7 +289,7 @@ components:
           $ref: '#/components/schemas/email'
         password:
           $ref: '#/components/schemas/password'
-    
+
     loginSuccessInfo:
       type: object
       properties:
@@ -305,7 +305,7 @@ components:
           properties:
             nickname:
               $ref: '#/components/schemas/nickname'
-    
+
     credentialRequestInfo:
       type: object
       properties:
@@ -345,7 +345,7 @@ components:
           type: string
           format: date-time
           description: 出品時刻
-      
+
     products:
       type: array
       items:
