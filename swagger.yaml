@@ -20,7 +20,7 @@ paths:
     get:
       summary: 個人情報（氏名、生年月日、住所）を取得する。
       parameters:
-        - $ref: '#/components/parameters/SessionIdHeader'
+        - $ref: '#/components/parameters/SessionIdInHeader'
       responses:
         '200':
           $ref: '#/components/responses/PersonalUserInfoResponse'
@@ -30,7 +30,7 @@ paths:
     patch:
       summary: 個人情報（氏名、生年月日、住所）の更新する。
       parameters:
-        - $ref: '#/components/parameters/SessionIdHeader'
+        - $ref: '#/components/parameters/SessionIdInHeader'
       requestBody:
         $ref: '#/components/requestBodies/PersonalUserInfoRequest'
       responses:
@@ -43,7 +43,7 @@ paths:
     get:
       summary: プロフィール情報（ニックネーム、プロフィール画像、自己紹介）を取得する。
       parameters:
-        - $ref: '#/components/parameters/SessionIdHeader'
+        - $ref: '#/components/parameters/SessionIdInHeader'
       responses:
         '200':
           $ref: '#/components/responses/ProfileUserInfoResponse'
@@ -53,7 +53,7 @@ paths:
     patch:
       summary: プロフィール情報（ニックネーム、プロフィール画像、自己紹介）の更新する。
       parameters:
-        - $ref: '#/components/parameters/SessionIdHeader'
+        - $ref: '#/components/parameters/SessionIdInHeader'
       requestBody:
         $ref: '#/components/requestBodies/ProfileUserInfoRequest'
       responses:
@@ -108,7 +108,7 @@ paths:
     get:
       summary: ユーザーの登録されているすべての配送先を取得する。
       parameters:
-        - $ref: '#/components/parameters/SessionIdHeader'
+        - $ref: '#/components/parameters/SessionIdInHeader'
       responses:
         '200':
           $ref: '#/components/responses/AllShippingAddressesResponse'
@@ -119,7 +119,7 @@ paths:
     post:
       summary: 新しい配送先を追加する。
       parameters:
-        - $ref: '#/components/parameters/SessionIdHeader'
+        - $ref: '#/components/parameters/SessionIdInHeader'
       requestBody:
         $ref: '#/components/requestBodies/ShippingAddressRequest'
       responses:
@@ -132,7 +132,7 @@ paths:
     patch:
       summary: 既存の配送先情報を更新する。
       parameters:
-        - $ref: '#/components/parameters/SessionIdHeader'
+        - $ref: '#/components/parameters/SessionIdInHeader'
         - $ref: '#/components/parameters/ShippingAddressId'
       requestBody:
         $ref: '#/components/requestBodies/ShippingAddressRequest'
@@ -146,7 +146,7 @@ paths:
     delete:
       summary: 既存の配送先情報を削除する。
       parameters:
-        - $ref: '#/components/parameters/SessionIdHeader'
+        - $ref: '#/components/parameters/SessionIdInHeader'
         - $ref: '#/components/parameters/ShippingAddressId'
       responses:
         '204':
@@ -160,7 +160,7 @@ paths:
     get:
       summary: アクティブな配送先を取得する。
       parameters:
-        - $ref: '#/components/parameters/SessionIdHeader'
+        - $ref: '#/components/parameters/SessionIdInHeader'
       responses:
         '200':
           $ref: '#/components/responses/ActiveShippingAddressesResponse'
@@ -187,7 +187,7 @@ components:
       schema:
         $ref: '#/components/schemas/shippingAddressId'
 
-    SessionIdHeader:
+    SessionIdInHeader:
       description: セッションID
       in: header
       name: sessionId
