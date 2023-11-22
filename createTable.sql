@@ -14,6 +14,7 @@ CREATE TABLE USER (
   nickname VARCHAR(100) NOT NULL,
   profile_image_path VARCHAR(500) DEFAULT 'default_profile.png',
   introduce TEXT,
+  active_shipping_address_id INT FOREIGN KEY REFERENCES SHIPPING_ADDRESS(shipping_address_id),
   name VARCHAR(100),
   name_kana VARCHAR(100),
   birthday DATE,
@@ -87,6 +88,23 @@ CREATE TABLE FAVORITE (
   user_id INT NOT NULL FOREIGN KEY REFERENCES USER(user_id),
   datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (product_id, user_id)
+);
+
+-- 閲覧
+CREATE TABLE PRODUCTVIEWS (
+  product_id INT NOT NULL FOREIGN KEY REFERENCES PRODUCT(product_id),
+  user_id INT NOT NULL FOREIGN KEY REFERENCES USER(user_id),
+  datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (product_id, user_id)
+);
+
+-- 検索履歴
+CREATE TABLE SEARCH_HISTORY (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL FOREIGN KEY REFERENCES USER(user_id),
+  search_query VARCHAR(255),
+  search_params TEXT,
+  datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- 取引

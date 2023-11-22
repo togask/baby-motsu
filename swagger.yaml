@@ -1,0 +1,877 @@
+openapi: 3.0.0
+info:
+  title: baby-motsu API
+  version: 1.0.0
+servers:
+  - url: http://api.example.com/v1
+paths:
+  /api/users/{userId}/mypage:
+    get:
+      summary: マイページ情報（プロフィール、評価、出品商品一覧）を取得する。
+      parameters:
+        - $ref: '#/components/parameters/UserIdInPath'
+      responses:
+        '200':
+          $ref: '#/components/responses/MypageResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /api/users/personal:
+    get:
+      summary: 個人情報（氏名、生年月日、住所）を取得する。
+      parameters:
+        - $ref: '#/components/parameters/SessionIdInHeader'
+        - $ref: '#/components/parameters/UserIdInHeader'
+      responses:
+        '200':
+          $ref: '#/components/responses/PersonalUserInfoResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+    patch:
+      summary: 個人情報（氏名、生年月日、住所）の更新する。
+      parameters:
+        - $ref: '#/components/parameters/SessionIdInHeader'
+        - $ref: '#/components/parameters/UserIdInHeader'
+      requestBody:
+        $ref: '#/components/requestBodies/PersonalUserInfoRequest'
+      responses:
+        '204':
+          $ref: '#/components/responses/NoContentResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+
+  /api/users/profile:
+    get:
+      summary: プロフィール情報（ニックネーム、プロフィール画像、自己紹介）を取得する。
+      parameters:
+        - $ref: '#/components/parameters/SessionIdInHeader'
+        - $ref: '#/components/parameters/UserIdInHeader'
+      responses:
+        '200':
+          $ref: '#/components/responses/ProfileUserInfoResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+    patch:
+      summary: プロフィール情報（ニックネーム、プロフィール画像、自己紹介）の更新する。
+      parameters:
+        - $ref: '#/components/parameters/SessionIdInHeader'
+        - $ref: '#/components/parameters/UserIdInHeader'
+      requestBody:
+        $ref: '#/components/requestBodies/ProfileUserInfoRequest'
+      responses:
+        '204':
+          $ref: '#/components/responses/NoContentResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /api/auth/login:
+    post:
+      summary: ユーザーがメールアドレスとパスワードを使用してログインする。
+      requestBody:
+        $ref: '#/components/requestBodies/LoginRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/LoginResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /api/auth/logout:
+    post:
+      summary: ユーザーが現在のセッションからログアウトする。
+      parameters:
+        - $ref: '#/components/parameters/SessionIdInHeader'
+      responses:
+        '204':
+          $ref: '#/components/responses/NoContentResponse'
+        '401':
+          $ref: '#/components/responses/BadRequestError'
+
+  /api/auth/signup:
+    post:
+      summary: 新しいユーザーがアカウントを作成する。
+      requestBody:
+        $ref: '#/components/requestBodies/SignupRequest'
+      responses:
+        '201':
+          $ref: '#/components/responses/LoginResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /api/auth/update-credentials:
+    patch:
+      summary: ユーザーがメールアドレスとパスワードを同時に更新する。
+      parameters:
+        - $ref: '#/components/parameters/SessionIdInHeader'
+        - $ref: '#/components/parameters/UserIdInHeader'
+      requestBody:
+        $ref: '#/components/requestBodies/CredentialRequest'
+      responses:
+        '204':
+          $ref: '#/components/responses/NoContentResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /api/shipping-addresses/list:
+    get:
+      summary: ユーザーの登録されているすべての配送先を取得する。
+      parameters:
+        - $ref: '#/components/parameters/SessionIdInHeader'
+        - $ref: '#/components/parameters/UserIdInHeader'
+      responses:
+        '200':
+          $ref: '#/components/responses/AllShippingAddressesResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /api/shipping-addresses:
+    post:
+      summary: 新しい配送先を追加する。
+      parameters:
+        - $ref: '#/components/parameters/SessionIdInHeader'
+        - $ref: '#/components/parameters/UserIdInHeader'
+      requestBody:
+        $ref: '#/components/requestBodies/ShippingAddressRequest'
+      responses:
+        '201':
+          $ref: '#/components/responses/CreatedResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /api/shipping-addresses/{shippingAddressId}:
+    patch:
+      summary: 既存の配送先情報を更新する。
+      parameters:
+        - $ref: '#/components/parameters/SessionIdInHeader'
+        - $ref: '#/components/parameters/ShippingAddressIdInPath'
+      requestBody:
+        $ref: '#/components/requestBodies/ShippingAddressRequest'
+      responses:
+        '204':
+          $ref: '#/components/responses/NoContentResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+    delete:
+      summary: 既存の配送先情報を削除する。
+      parameters:
+        - $ref: '#/components/parameters/SessionIdInHeader'
+        - $ref: '#/components/parameters/ShippingAddressIdInPath'
+      responses:
+        '204':
+          $ref: '#/components/responses/NoContentResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+  
+  /api/shipping-addresses/active:
+    get:
+      summary: アクティブな配送先を取得する。
+      parameters:
+        - $ref: '#/components/parameters/SessionIdInHeader'
+        - $ref: '#/components/parameters/UserIdInHeader'
+      responses:
+        '200':
+          $ref: '#/components/responses/ActiveShippingAddressesResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /api/products/{productId}:
+    get:
+      summary: 商品の詳細情報を取得する。
+      parameters:
+        - $ref: '#/components/parameters/ProductIdInPath'
+      responses:
+        '200':
+          $ref: '#/components/responses/ProductDetailsResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+    put:
+      summary: 既存の商品情報を更新する。
+      parameters:
+        - $ref: '#/components/parameters/SessionIdInHeader'
+        - $ref: '#/components/parameters/ProductIdInPath'
+      requestBody:
+        $ref: '#/components/requestBodies/ProductDetailsRequest'
+      responses:
+        '204':
+          $ref: '#/components/responses/NoContentResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+    delete:
+      summary: 指定された商品IDに対応する商品を削除する。
+      parameters:
+        - $ref: '#/components/parameters/SessionIdInHeader'
+        - $ref: '#/components/parameters/ProductIdInPath'
+      responses:
+        '204':
+          $ref: '#/components/responses/NoContentResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+  
+  /api/products:
+    post:
+      summary: 新しい商品を出品する。
+      parameters:
+        - $ref: '#/components/parameters/SessionIdInHeader'
+        - $ref: '#/components/parameters/UserIdInHeader'
+      requestBody:
+        $ref: '#/components/requestBodies/ProductDetailsRequest'
+      responses:
+        '201':
+          $ref: '#/components/responses/CreatedResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+
+  /api/products/{productId}/reviews:
+    post:
+      summary: 商品に対するレビューを投稿する。
+      parameters:
+        - $ref: '#/components/parameters/SessionIdInHeader'
+        - $ref: '#/components/parameters/UserIdInHeader'
+        - $ref: '#/components/parameters/ProductIdInPath'
+      requestBody:
+        $ref: '#/components/requestBodies/ReviewRequest'
+      responses:
+        '201':
+          $ref: '#/components/responses/CreatedResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+
+  # 他のエンドポイントも同様に定義...
+
+components:
+  parameters:
+    UserIdInPath:
+      description: URLに含めるユーザーID
+      name: userId
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/userId'
+
+    ShippingAddressIdInPath:
+      description: URLに含める配送先ID
+      name: shippingAddressId
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/shippingAddressId'
+
+    ProductIdInPath:
+      description: URLに含める商品ID
+      name: productId
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/productId'
+
+    SessionIdInHeader:
+      description: リクエストヘッダに含めるセッションID
+      in: header
+      name: sessionId
+      required: true
+      schema:
+        $ref: '#/components/schemas/sessionId'
+
+    UserIdInHeader:
+      description: リクエストヘッダに含めるユーザーID
+      in: header
+      name: sessionId
+      required: true
+      schema:
+        $ref: '#/components/schemas/userId'
+
+  requestBodies: 
+    PersonalUserInfoRequest:
+      description: 個人情報更新情報
+      required: true
+      content:
+        application/json: 
+          schema: 
+            $ref: '#/components/schemas/personalUserInfo'
+
+    ProfileUserInfoRequest:
+      description: プロフィール情報更新情報
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/profileUserInfo'
+
+    LoginRequest:
+      description: ログインリクエスト情報
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/loginInfo'
+
+    SignupRequest:
+      description: サインアップリクエスト情報
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/signupInfo'
+
+    CredentialRequest:
+      description: メールアドレス・パスワード更新情報
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/credentialRequestInfo'
+
+    ShippingAddressRequest:
+      description: 新規配送先情報
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/shippingAddress'
+
+    ProductDetailsRequest:
+      description: 商品詳細更新情報
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/productDetailsRequestInfo'
+
+    ReviewRequest:
+      description: レビュー投稿情報
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/reviewRequest'
+
+  responses: 
+    MypageResponse:
+      description: プロフィール情報
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              userId:
+                $ref: '#/components/schemas/userId'
+              profile:
+                $ref: '#/components/schemas/profileUserInfoWithRating'
+              products:
+                $ref: '#/components/schemas/products'
+    
+    PersonalUserInfoResponse:
+      description: プロフィール情報
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/personalUserInfo'
+
+    ProfileUserInfoResponse:
+      description: プロフィール情報
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/profileUserInfo'
+
+    LoginResponse:
+      description: ログイン成功情報
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/loginSuccessInfo'
+    
+    AllShippingAddressesResponse:
+      description: ユーザーの登録されているすべての配送先情報
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/shippingAddresses'
+
+    ActiveShippingAddressesResponse:
+      description: ユーザーの登録されているアクティブ配送先情報
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/shippingAddressWithId'
+
+    ProductDetailsResponse:
+      description: 商品の詳細情報
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/productDetailsResponseInfo'
+
+    CreatedResponse:
+      description: リクエストに成功して、正常に作成されました(201)
+
+    NoContentResponse:
+      description: リクエストが成功しましたが、返すべき内容はありません(204)
+
+    BadRequestError:
+      description: リクエストが不正または間違っています(400)
+
+    UnauthorizedError:
+      description: 認証に失敗しました(401)
+    
+    NotFoundError:
+      description: リソースが見つからない(404)
+
+    # 他のスキーマも同様に定義...
+
+  schemas:
+    # 共通のデータ構造
+    sessionId:
+      type: string
+      description: セッションID
+    
+    userId:
+      type: integer
+      format: int32
+      description: ユーザーID
+
+    nickname:
+      type: string
+      description: ニックネーム
+
+    password:
+      type: string
+      format: password
+      description: パスワード
+
+    email:
+      type: string
+      format: email
+      description: メールアドレス
+
+    imagePath:
+      type: string
+      description: 画像パス
+    
+    introduce:
+      type: string
+      description: 自己紹介
+
+    shippingAddressId:
+      type: integer
+      format: int32
+      description: 配送先ID
+
+    productId:
+      type: integer
+      format: int64
+      description: 商品ID
+    
+    productName:
+      type: string
+      description: 商品名
+
+    price:
+      type: integer
+      description: 価格
+
+    isFlag:
+      type: boolean
+      description: かどうか
+
+    codeMasterId:
+      type: integer
+      format: int32
+      description: コードマスタID
+    
+    codeMasterName:
+      type: string
+      description: コードマスタ名
+
+    categoryInfo:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/codeMasterId'
+          description: カテゴリID
+        name:
+          $ref: '#/components/schemas/codeMasterName'
+          description: カテゴリ名
+
+    personalUserInfo:
+      type: object
+      properties:
+        name:
+          type: string
+          description: 氏名
+        nameKana:
+          type: string
+          description: 氏名(カタカナ)
+        birthday:
+          type: string
+          format: date
+          description: 誕生日
+        address:
+          type: string
+          description: 住所
+
+    profileUserInfo:
+        type: object
+        properties:
+          profileImage:
+            $ref: '#/components/schemas/imagePath'
+          nickname:
+            $ref: '#/components/schemas/nickname'
+
+    profileUserInfoWithIntroduce:
+      type: object
+      properties:
+          profileImage:
+            $ref: '#/components/schemas/imagePath'
+          nickname:
+            $ref: '#/components/schemas/nickname'
+          introduce:
+            $ref: '#/components/schemas/introduce'
+
+    averageRating:
+      type: object
+      properties:
+        averageRating:
+          type: number
+          format: float
+          description: 平均取引評価値
+
+    profileUserInfoWithRating:
+      allOf: 
+        - $ref: '#/components/schemas/profileUserInfoWithIntroduce'
+        - $ref: '#/components/schemas/averageRating'
+
+    loginInfo:
+      type: object
+      properties:
+        email:
+          $ref: '#/components/schemas/email'
+        password:
+          $ref: '#/components/schemas/password'
+
+    loginSuccessInfo:
+      type: object
+      properties:
+        userId:
+          $ref: '#/components/schemas/userId'
+        sessionId:
+          $ref: '#/components/schemas/sessionId'
+    
+    signupInfo:
+      allOf:
+        - $ref: '#/components/schemas/loginInfo'
+        - type: object
+          properties:
+            nickname:
+              $ref: '#/components/schemas/nickname'
+
+    credentialRequestInfo:
+      type: object
+      properties:
+        currentPassword:
+          $ref: '#/components/schemas/password'
+          description: 現在のパスワード
+        newEmail:
+          $ref: '#/components/schemas/email'
+          description: 更新用メールアドレス
+        newPassword:
+          $ref: '#/components/schemas/password'
+          description: 更新用パスワード
+        confirmNewPassword:
+          $ref: '#/components/schemas/password'
+          description: 更新用パスワード（再確認）
+
+    shippingAddress:
+      type: object
+      properties:
+        sei:
+          type: string
+          description: 姓
+        mei:
+          type: string
+          description: 名
+        seiKana:
+          type: string
+          description: 姓のカナ
+        meiKana:
+          type: string
+          description: 名のカナ
+        postCode:
+          type: string
+          description: 郵便番号
+        prefectures:
+          type: string
+          description: 都道府県
+        municipalities:
+          type: string
+          description: 市区町村
+        street:
+          type: string
+          description: 番地
+        buildingName:
+          type: string
+          description: 建物名
+          nullable: true
+        tel:
+          type: string
+          description: 電話番号
+
+    shippingAddressWithId:
+      type: object
+      properties:
+        shippingAddressId:
+            $ref: '#/components/schemas/shippingAddressId'
+        shippingAddress:
+          $ref: '#/components/schemas/shippingAddress'
+  
+    shippingAddresses:
+      type: array
+      items:
+        $ref: '#/components/schemas/shippingAddressWithId'
+
+    product:
+      type: object
+      properties:
+        productName:
+          $ref: '#/components/schemas/productName'
+          description: 商品名
+        productImagePath:
+          $ref: '#/components/schemas/imagePath'
+          description: 商品画像パス
+        price:
+          $ref: '#/components/schemas/price'
+          description: 価格
+        isSold:
+          $ref: '#/components/schemas/isFlag'
+          description: 商品が売れたかどうか
+        date:
+          type: string
+          format: date-time
+          description: 出品時刻
+
+    productWithId:
+      type: object
+      properties:
+        productId:
+          $ref: '#/components/schemas/productId'
+        product:
+          $ref: '#/components/schemas/product'
+
+    products:
+      type: array
+      items:
+        $ref: '#/components/schemas/productWithId'
+
+    image:
+     type: object
+     properties:
+       path:
+        type: string
+        description: 商品画像パス
+       order:
+        type: integer
+        description: 並び順
+    
+    images:
+      type: array
+      items:
+        $ref: '#/components/schemas/image'
+
+    itemAttributes:
+      type: object
+      properties:
+        age:
+          $ref: '#/components/schemas/codeMasterName'
+          description: 月齢
+        height:
+          $ref: '#/components/schemas/codeMasterName'
+          description: 身長
+        weight:
+          $ref: '#/components/schemas/codeMasterName'
+          description: 体重
+        brand:
+          $ref: '#/components/schemas/codeMasterName'
+          description: ブランド
+        majorCategory:
+          $ref: '#/components/schemas/categoryInfo'
+        minorCategory:
+          $ref: '#/components/schemas/categoryInfo'
+        color:
+          $ref: '#/components/schemas/codeMasterName'
+          description: 色
+        condition:
+          $ref: '#/components/schemas/codeMasterName'
+          description: 状態
+
+    itemAttributeIds:
+      type: object
+      properties:
+        age:
+          $ref: '#/components/schemas/codeMasterId'
+          description: 月齢
+        height:
+          $ref: '#/components/schemas/codeMasterId'
+          description: 身長
+        weight:
+          $ref: '#/components/schemas/codeMasterId'
+          description: 体重
+        brand:
+          $ref: '#/components/schemas/codeMasterId'
+          description: ブランド
+        majorCategory:
+          $ref: '#/components/schemas/categoryInfo'
+        minorCategory:
+          $ref: '#/components/schemas/categoryInfo'
+        color:
+          $ref: '#/components/schemas/codeMasterId'
+          description: 色
+        condition:
+          $ref: '#/components/schemas/codeMasterId'
+          description: 状態
+
+    shippingDetails:
+      type: object
+      properties:
+        shippingFeeResponsibility:
+          $ref: '#/components/schemas/codeMasterName'
+          description: 配送料の負担
+        shippingMethod:
+          $ref: '#/components/schemas/codeMasterName'
+          description: 配送の方法
+        shippingOriginRegion:
+          $ref: '#/components/schemas/codeMasterName'
+          description: 配送元の地域
+        dayToShip:
+          $ref: '#/components/schemas/codeMasterName'
+          description: 配送までの日数
+
+    shippingDetailIds:
+      type: object
+      properties:
+        shippingFeeResponsibility:
+          $ref: '#/components/schemas/codeMasterId'
+          description: 配送料の負担
+        shippingMethod:
+          $ref: '#/components/schemas/codeMasterId'
+          description: 配送の方法
+        shippingOriginRegion:
+          $ref: '#/components/schemas/codeMasterId'
+          description: 配送元の地域
+        dayToShip:
+          $ref: '#/components/schemas/codeMasterId'
+          description: 配送までの日数
+
+    sellerInfo:
+      type: object
+      properties:
+        userId:
+          $ref: '#/components/schemas/userId'
+        nickname:
+          $ref: '#/components/schemas/nickname'
+        profileImagePath:
+          $ref: '#/components/schemas/imagePath'
+        averageRating:
+          $ref: '#/components/schemas/averageRating'
+
+    reviewResponse:
+      type: object
+      properties:
+        rating:
+          type: integer
+          description: 評価値
+        usageDuration:
+          $ref: '#/components/schemas/codeMasterName'
+          description: 使用期間
+        comment:
+          type: string
+          description: コメント
+
+    reviewRequest:
+      type: object
+      properties:
+        rating:
+          type: integer
+          description: 評価値
+        usageDuration:
+          $ref: '#/components/schemas/codeMasterName'
+          description: 使用期間
+        comment:
+          type: string
+          description: コメント
+
+    reviews:
+      type: array
+      items:
+        $ref: '#/components/schemas/reviewResponse'
+
+    productDetailsResponseInfo:
+      type: object
+      properties:
+        productId:
+          $ref: '#/components/schemas/productId'
+          description: 商品ID
+        images:
+          $ref: '#/components/schemas/images'
+          description: 画像リスト
+        productName:
+          $ref: '#/components/schemas/productName'
+          description: 商品名
+        productDescription:
+          type: string
+          description: 商品説明
+        price:
+          $ref: '#/components/schemas/price'
+          description: 価格
+        itemAttributes:
+          $ref: '#/components/schemas/itemAttributes'
+          description: 商品の詳細
+        shippingDetails:
+          $ref: '#/components/schemas/shippingDetails'
+          description: 配送について
+        isLiked:
+          $ref: '#/components/schemas/isFlag'
+          description: いいね！かどうか
+        isSold:
+          $ref: '#/components/schemas/isFlag'
+          description: いいね！かどうか
+        isSeller:
+          $ref: '#/components/schemas/isFlag'
+          description: 出品者かどうか
+        isBuyer:
+          $ref: '#/components/schemas/isFlag'
+          description: 購入者かどうか
+        seller:
+          $ref: '#/components/schemas/sellerInfo'
+          nullrable: true
+          description: 出品者情報
+        reviews:
+          $ref: '#/components/schemas/reviews'
+          nullrable: true
+          description: レビューリスト
+
+    productDetailsRequestInfo:
+      type: object
+      properties:
+        images:
+          $ref: '#/components/schemas/images'
+          description: 画像リスト
+        productName:
+          $ref: '#/components/schemas/productName'
+          description: 商品名
+        productDescription:
+          type: string
+          description: 商品説明
+        price:
+          $ref: '#/components/schemas/price'
+          description: 価格
+        itemAttributes:
+          $ref: '#/components/schemas/itemAttributeIds'
+          description: 商品の詳細
+        shippingDetails:
+          $ref: '#/components/schemas/shippingDetailIds'
+          description: 配送について
