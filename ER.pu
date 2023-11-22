@@ -8,6 +8,7 @@ entity "ユーザー" as user {
   nickname : ユーザー名
   profile_image_path : プロフィール画像パス
   introduce : 自己紹介文
+  active_shipping_address_id : アクティブ配送先ID
   name : 氏名
   name_kana : 氏名カナ
   birthday : 生年月日
@@ -29,6 +30,15 @@ entity "配送先" as shipping_address {
   street : 番地
   building_name : 建物名
   tel : 電話番号
+}
+
+entity "検索履歴" as search_history {
+  + id : ID
+  --
+  user_id : ユーザーID
+  search_query : 検索クエリ
+  search_params : 検索パラメータ
+  datetime : 検索日時
 }
 
 entity "取引" as transaction {
@@ -59,6 +69,13 @@ entity "お気に入り" as favorite {
   datetime : 登録日時
 }
 
+entity "閲覧" as productviews {
+  + product_id : 商品ID
+  + user_id : ユーザーID
+  --
+  datetime : 閲覧日時
+}
+
 entity "チャージ" as charge {
   + charge_id : チャージID
   --
@@ -80,6 +97,7 @@ entity "レビュー" as review {
 entity "商品" as product {
   + product_id : 商品ID
   --
+  seller_id : 出品者ID
   age_id : 月齢ID
   weight_id : 体重ID
   height_id : 身長ID
@@ -152,26 +170,29 @@ entity "コードマスタ" as code_master {
 
 user "1" -- "0..*" shipping_address
 user "1" -- "0..*" transaction
+user "1" -- "0..*" search_history
+user "1" -- "0..*" point
+user "1" -- "0..*" favorite
+user "1" -- "0..*" productviews
+user "1" -- "0..*" charge
+user "1" -- "0..*" review
+user "1" -- "0..*" evaluation
+user "1" -- "0..*" notice
+user "1" -- "0..*" product
+product "1" -- "0..*" transaction
 product "1" -- "0..*" transaction
 product "1" -- "1..10" product_image
-user "1" -- "0..*" point
-transaction "1" -- "0..*" point
 product "1" -- "0..*" favorite
-user "1" -- "0..*" favorite
-user "1" -- "0..*" charge
+product "1" -- "0..*" productviews
 product "1" -- "0..*" review
-user "1" -- "0..*" review
+product "1" -- "0..*" notice
 major_category "1" -- "0..*" product
 minor_category "1" -- "0..*" product
+major_category "1" -- "0..*" minor_category
+transaction "1" -- "0..*" point
 transaction "1" -- "0..*" evaluation
-user "1" -- "0..*" evaluation
-major_category "1" -- "0..*" minor_category
-user "1" -- "0..*" notice
 transaction "1" -- "0..*" notice
-product "1" -- "0..*" notice
-major_category "1" -- "0..*" minor_category
 product -- code_master
-user -- code_master
 transaction -- code_master
 review -- code_master
 notice -- code_master
