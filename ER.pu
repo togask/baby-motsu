@@ -97,6 +97,7 @@ entity "レビュー" as review {
 entity "商品" as product {
   + product_id : 商品ID
   --
+  seller_id : 出品者ID
   age_id : 月齢ID
   weight_id : 体重ID
   height_id : 身長ID
@@ -189,7 +190,6 @@ major_category "1" -- "0..*" minor_category
 user "1" -- "0..*" notice
 transaction "1" -- "0..*" notice
 product "1" -- "0..*" notice
-major_category "1" -- "0..*" minor_category
 product -- code_master
 user -- code_master
 transaction -- code_master
