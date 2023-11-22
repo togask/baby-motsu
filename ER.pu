@@ -198,6 +198,7 @@ major_category "1" -- "0..*" minor_category
 transaction "1" -- "0..*" point
 transaction "1" -- "0..*" evaluation
 transaction "1" -- "0..*" notice
+product "1" -- "0..*" notice
 product -- code_master
 transaction -- code_master
 review -- code_master
