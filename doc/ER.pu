@@ -159,6 +159,13 @@ entity "小カテゴリ" as minor_category {
   minor_category : 小カテゴリ
 }
 
+entity "色" as color {
+  + color_id : 色ID
+  --
+  name : 色名
+  color_code : 色コード
+}
+
 entity "コードマスタ" as code_master {
   + code_id : コードID
   --
@@ -184,6 +191,7 @@ product "1" -- "0..*" review
 user "1" -- "0..*" review
 major_category "1" -- "0..*" product
 minor_category "1" -- "0..*" product
+color "1" -- "0..*" product
 transaction "1" -- "0..*" evaluation
 user "1" -- "0..*" evaluation
 major_category "1" -- "0..*" minor_category
