@@ -1,0 +1,9 @@
+RewriteEngine On
+RewriteBase /
+
+# すでにファイルやディレクトリが存在する場合は何もしない
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+
+# すべてのリクエストを index.php に転送する
+RewriteRule ^ index.php [QSA,L]
