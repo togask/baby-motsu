@@ -1,8 +1,43 @@
 <?php
 class Database
 {
-  public static function connect()
+  private $connection;
+
+  public function __construct()
   {
-    // データベース接続のロジック
+    $config = require '../config/config.php';
+    $dbConfig = $config['db'];
+
+    $this->connection = new PDO("mysql:host={$dbConfig['host']};dbname={$dbConfig['dbname']}", $dbConfig['user'], $dbConfig['password']);
+  }
+
+  public function connect()
+  {
+    return $this->connection;
+  }
+
+  public function query($sql)
+  {
+    return $this->connection->query($sql);
+  }
+
+  public function prepare($sql)
+  {
+    return $this->connection->prepare($sql);
+  }
+
+  public function execute($statement, $parameters)
+  {
+    return $statement->execute($parameters);
+  }
+
+  public function fetch($statement)
+  {
+    return $statement->fetch(PDO::FETCH_ASSOC);
+  }
+
+  public function fetchAll($statement)
+  {
+    return $statement->fetchAll(PDO::FETCH_ASSOC);
   }
 }
