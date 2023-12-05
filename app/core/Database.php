@@ -8,12 +8,12 @@ class Database
     $config = require '../config/config.php';
     $dbConfig = $config['db'];
 
-    $this->connection = new PDO("mysql:host={$dbConfig['host']};dbname={$dbConfig['dbname']}", $dbConfig['user'], $dbConfig['password']);
-  }
-
-  public function connect()
-  {
-    return $this->connection;
+    $this->connection = new PDO(
+      "mysql:host={$dbConfig['host']};dbname={$dbConfig['dbname']}",
+      $dbConfig['user'],
+      $dbConfig['password'],
+      $dbConfig['options'],
+    );
   }
 
   public function query($sql)
@@ -26,7 +26,7 @@ class Database
     return $this->connection->prepare($sql);
   }
 
-  public function execute($statement, $parameters)
+  public function execute($statement, $parameters = [])
   {
     return $statement->execute($parameters);
   }
