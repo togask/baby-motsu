@@ -10,10 +10,10 @@ $path = $parsedUrl['path'];
 $routes = [
   'GET' => [
     '/api/example' => ['controller' => 'ExampleController', 'method' => 'search'],
-    '/api/auth' => ['controller' => 'AuthController', 'method' => 'login'],
   ],
   'POST' => [
     '/api/example' => ['controller' => 'ExampleController', 'method' => 'create'],
+    '/api/auth' => ['controller' => 'AuthController', 'method' => 'login'],
   ],
   'PUT' => [
     '/api/example' => ['controller' => 'ExampleController', 'method' => 'update'],
