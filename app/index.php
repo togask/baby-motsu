@@ -3,6 +3,10 @@
 require_once 'models/UserModel.php';
 // コントローラーの読み込み
 require_once 'controllers/AuthController.php';
+// コアの読み込み
+require_once 'core/Database.php';
+require_once 'core/Response.php';
+require_once 'core/SessionManager.php';
 
 $requestUri = $_SERVER['REQUEST_URI'];
 $method = $_SERVER['REQUEST_METHOD'];
