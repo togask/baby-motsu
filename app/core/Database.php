@@ -5,7 +5,7 @@ class Database
 
   public function __construct()
   {
-    $config = require '../../config/config.php';
+    $config = require 'config/config.php';
     $dbConfig = $config['db'];
 
     $this->connection = new PDO(
