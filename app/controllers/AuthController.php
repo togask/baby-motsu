@@ -16,16 +16,18 @@ class AuthController
 
     if ($user) {
       // 認証成功
-      // セッションIDを生成または取得
       SessionManager::startSession();
       $sessionId = session_id();
 
-      $user_id = $user['user_id'];
+      // コードマスタデータの取得
+      $codeMasterModel = new CodeMasterModel();
+      $codeMasterData = $codeMasterModel->getAllCodeMasterData();
 
-      // レスポンスとしてユーザーIDとセッションIDを返す
+      // レスポンスとしてユーザーID、セッションID、コードマスターデータを返す
       Response::sendResponse(200, [
-        'userId' => $user_id,
-        'sessionId' => $sessionId
+        'userId' => $user['user_id'],
+        'sessionId' => $sessionId,
+        'codeMaster' => $codeMasterData
       ]);
     } else {
       // 認証失敗

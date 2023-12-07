@@ -1,4 +1,14 @@
 <?php
+// モデルの読み込み
+require_once 'models/UserModel.php';
+require_once 'models/CodeMasterModel.php';
+// コントローラーの読み込み
+require_once 'controllers/AuthController.php';
+// コアの読み込み
+require_once 'core/Database.php';
+require_once 'core/Response.php';
+require_once 'core/SessionManager.php';
+
 $requestUri = $_SERVER['REQUEST_URI'];
 $method = $_SERVER['REQUEST_METHOD'];
 
@@ -6,23 +16,17 @@ $method = $_SERVER['REQUEST_METHOD'];
 $parsedUrl = parse_url($requestUri);
 $path = $parsedUrl['path'];
 
+// ベースパスを取り除く
+$basePath = '/backend';
+$path = str_replace($basePath, '', $path);
+
 // ルーティングの定義
 $routes = [
   'GET' => [
-    '/api/example' => ['controller' => 'ExampleController', 'method' => 'search'],
+    '/api/auth/' => ['controller' => 'AuthController', 'method' => 'login'],
   ],
   'POST' => [
-    '/api/example' => ['controller' => 'ExampleController', 'method' => 'create'],
-    '/api/auth' => ['controller' => 'AuthController', 'method' => 'login'],
-  ],
-  'PUT' => [
-    '/api/example' => ['controller' => 'ExampleController', 'method' => 'update'],
-  ],
-  'PATCH' => [
-    '/api/example' => ['controller' => 'ExampleController', 'method' => 'update'],
-  ],
-  'DELETE' => [
-    '/api/example' => ['controller' => 'ExampleController', 'method' => 'delete'],
+    '/api/auth/' => ['controller' => 'AuthController', 'method' => 'login'],
   ],
 ];
 
