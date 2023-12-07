@@ -19,10 +19,15 @@ class AuthController
       SessionManager::startSession();
       $sessionId = session_id();
 
-      // レスポンスとしてユーザーIDとセッションIDを返す
+      // コードマスタデータの取得
+      $codeMasterModel = new CodeMasterModel();
+      $codeMasterData = $codeMasterModel->getAllCodeMasterData();
+
+      // レスポンスとしてユーザーID、セッションID、コードマスターデータを返す
       Response::sendResponse(200, [
-        'userId' => $user->getId(),
-        'sessionId' => $sessionId
+        'userId' => $user['user_id'],
+        'sessionId' => $sessionId,
+        'codeMaster' => $codeMasterData
       ]);
     } else {
       // 認証失敗
