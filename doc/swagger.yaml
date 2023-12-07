@@ -213,6 +213,14 @@ paths:
           $ref: '#/components/responses/NotFoundError'
 
   /api/products:
+    get:
+      summary: 商品の一覧を取得する。
+      responses:
+        '200':
+          $ref: '#/components/responses/ProductsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+
     post:
       summary: 新しい商品を出品する。
       parameters:
