@@ -23,11 +23,19 @@ class AuthController
       $codeMasterModel = new CodeMasterModel();
       $codeMasterData = $codeMasterModel->getAllCodeMasterData();
 
+      // カテゴリデータの取得
+      $majorCategoryModel = new MajorCategoryModel();
+      $majorCategories = $majorCategoryModel->getAllMajorCategories();
+      $minorCategoryModel = new MinorCategoryModel();
+      $minorCategories = $minorCategoryModel->getAllMinorCategories();
+
       // レスポンスとしてユーザーID、セッションID、コードマスターデータを返す
       Response::sendResponse(200, [
         'userId' => $user['user_id'],
         'sessionId' => $sessionId,
-        'codeMaster' => $codeMasterData
+        'codeMaster' => $codeMasterData,
+        'major_category' => $majorCategories,
+        'minor_category' => $minorCategories
       ]);
     } else {
       // 認証失敗

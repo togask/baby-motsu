@@ -2,6 +2,8 @@
 // モデルの読み込み
 require_once 'models/UserModel.php';
 require_once 'models/CodeMasterModel.php';
+require_once 'models/MajorCategoryModel.php';
+require_once 'models/MinorCategoryModel.php';
 // コントローラーの読み込み
 require_once 'controllers/AuthController.php';
 // コアの読み込み
