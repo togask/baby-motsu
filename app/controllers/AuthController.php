@@ -29,13 +29,18 @@ class AuthController
       $minorCategoryModel = new MinorCategoryModel();
       $minorCategories = $minorCategoryModel->getAllMinorCategories();
 
+      // 色データの取得
+      $colorModel = new ColorModel();
+      $colors = $colorModel->getAllColors();
+
       // レスポンスとしてユーザーID、セッションID、コードマスターデータを返す
       Response::sendResponse(200, [
         'userId' => $user['user_id'],
         'sessionId' => $sessionId,
         'codeMaster' => $codeMasterData,
         'major_category' => $majorCategories,
-        'minor_category' => $minorCategories
+        'minor_category' => $minorCategories,
+        'colors' => $colors
       ]);
     } else {
       // 認証失敗
