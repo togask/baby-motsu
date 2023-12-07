@@ -6,7 +6,7 @@ class Database
   public function __construct()
   {
     try {
-      $config = require_once 'config/config.php';
+      $config = require 'config/config.php';
       $dbConfig = $config['db'];
 
       $connect = "mysql:host=" . $dbConfig['host'] . ";dbname=" . $dbConfig['dbname'];
