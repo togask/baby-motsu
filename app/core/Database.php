@@ -5,39 +5,72 @@ class Database
 
   public function __construct()
   {
-    $config = require '../config/config.php';
-    $dbConfig = $config['db'];
+    try {
+      $config = require_once 'config/config.php';
+      $dbConfig = $config['db'];
 
-    $this->connection = new PDO(
-      "mysql:host={$dbConfig['host']};dbname={$dbConfig['dbname']}",
-      $dbConfig['user'],
-      $dbConfig['password'],
-      $dbConfig['options'],
-    );
+      $connect = "mysql:host=" . $dbConfig['host'] . ";dbname=" . $dbConfig['dbname'];
+      $this->connection = new PDO(
+        $connect,
+        $dbConfig['user'],
+        $dbConfig['password'],
+        $dbConfig['options'],
+      );
+    } catch (PDOException $e) {
+      throw $e;
+    }
   }
 
   public function query($sql)
   {
-    return $this->connection->query($sql);
+    try {
+      return $this->connection->query($sql);
+    } catch (PDOException $e) {
+      // エラーハンドリング
+      throw $e;
+    }
   }
 
   public function prepare($sql)
   {
-    return $this->connection->prepare($sql);
+    try {
+      return $this->connection->prepare($sql);
+    } catch (PDOException $e) {
+      // エラーハンドリング
+      throw $e;
+    }
   }
 
-  public function execute($statement, $parameters = [])
+  public function execute($stmt, $parameters = [])
   {
-    return $statement->execute($parameters);
+    try {
+      foreach ($parameters as $param => $value) {
+        $stmt->bindParam($param, $value);
+      }
+      $stmt->execute();
+    } catch (PDOException $e) {
+      // エラーハンドリング
+      throw $e;
+    }
   }
 
-  public function fetch($statement)
+  public function fetch($stmt)
   {
-    return $statement->fetch(PDO::FETCH_ASSOC);
+    try {
+      return $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+      // エラーハンドリング
+      throw $e;
+    }
   }
 
-  public function fetchAll($statement)
+  public function fetchAll($stmt)
   {
-    return $statement->fetchAll(PDO::FETCH_ASSOC);
+    try {
+      return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+      // エラーハンドリング
+      throw $e;
+    }
   }
 }

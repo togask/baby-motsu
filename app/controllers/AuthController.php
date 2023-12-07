@@ -20,9 +20,11 @@ class AuthController
       SessionManager::startSession();
       $sessionId = session_id();
 
+      $user_id = $user['user_id'];
+
       // レスポンスとしてユーザーIDとセッションIDを返す
       Response::sendResponse(200, [
-        'userId' => $user->getId(),
+        'userId' => $user_id,
         'sessionId' => $sessionId
       ]);
     } else {
