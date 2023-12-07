@@ -19,13 +19,11 @@ class AuthController
       SessionManager::startSession();
       $sessionId = session_id();
 
-      $user_id = $user['user_id'];
-
       // コードマスタデータの取得
       $codeMasterModel = new CodeMasterModel();
       $codeMasterData = $codeMasterModel->getAllCodeMasterData();
 
-      // レスポンスとしてユーザーID、セッションID、コードマスターデータを返す
+      // レスポンスとしてユーザーIDとセッションIDを返す
       Response::sendResponse(200, [
         'userId' => $user['user_id'],
         'sessionId' => $sessionId,
