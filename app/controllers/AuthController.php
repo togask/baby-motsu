@@ -34,7 +34,7 @@ class AuthController
       $colors = $colorModel->getAllColors();
 
       // レスポンスとしてユーザーID、セッションID、コードマスターデータを返す
-      Response::sendResponse(200, [
+      Response::sendJSON([
         'userId' => $user['user_id'],
         'sessionId' => $sessionId,
         'codeMaster' => $codeMasterData,
@@ -44,7 +44,7 @@ class AuthController
       ]);
     } else {
       // 認証失敗
-      Response::sendResponse(401);
+      Response::sendError(401);
     }
   }
 
@@ -63,7 +63,7 @@ class AuthController
       return $user;
     } catch (\PDOException $e) {
       // データベースエラーのハンドリング
-      Response::sendResponse(500);
+      Response::sendError(500);
     }
   }
 }

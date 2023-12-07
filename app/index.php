@@ -5,8 +5,10 @@ require_once 'models/CodeMasterModel.php';
 require_once 'models/MajorCategoryModel.php';
 require_once 'models/MinorCategoryModel.php';
 require_once 'models/ColorModel.php';
+require_once 'models/ProductModel.php';
 // コントローラーの読み込み
 require_once 'controllers/AuthController.php';
+require_once 'controllers/SearchController.php';
 // コアの読み込み
 require_once 'core/Database.php';
 require_once 'core/Response.php';
@@ -26,7 +28,7 @@ $path = str_replace($basePath, '', $path);
 // ルーティングの定義
 $routes = [
   'GET' => [
-    '/api/auth/' => ['controller' => 'AuthController', 'method' => 'login'],
+    '/api/search/' => ['controller' => 'SearchController', 'method' => 'searchProducts'],
   ],
   'POST' => [
     '/api/auth/' => ['controller' => 'AuthController', 'method' => 'login'],
@@ -42,5 +44,5 @@ if (isset($routes[$method]) && array_key_exists($path, $routes[$method])) {
   $controller->$methodName();
 } else {
   // 404 Not FoundレスポンスをResponseクラスを使用して送信
-  Response::sendResponse(404);
+  Response::sendError(404);
 }
