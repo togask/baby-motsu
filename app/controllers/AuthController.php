@@ -19,6 +19,8 @@ class AuthController
       SessionManager::startSession();
       $sessionId = session_id();
 
+      $user_id = $user['user_id'];
+
       // コードマスタデータの取得
       $codeMasterModel = new CodeMasterModel();
       $codeMasterData = $codeMasterModel->getAllCodeMasterData();
