@@ -1,20 +1,17 @@
 <?php
 class Response
 {
-  public static function sendResponse($statusCode, $data = null)
+  public static function sendJSON($data, $statusCode = 200)
   {
+    header('Content-Type: application/json');
     header("HTTP/1.1 " . $statusCode . " " . self::getStatusCodeMessage($statusCode));
-
-    if ($statusCode == 200) {
-      // HTTPステータスコードが200の場合、JSONデータを送信
-      header('Content-Type: application/json');
-      echo json_encode($data);
-    } elseif ($statusCode >= 400 && $statusCode < 500) { // HTTPステータスコードが400台の場合、エラーメッセージを送信
-      header('Content-Type: application/json');
-      echo json_encode(['error' => self::getStatusCodeMessage($statusCode)]);
-    }
-
+    echo json_encode($data);
     exit;
+  }
+
+  public static function sendError($errorCode, $errorMessage = null)
+  {
+    self::sendJSON(['error' => $errorMessage ?: self::getStatusCodeMessage($errorCode)], $errorCode);
   }
 
   private static function getStatusCodeMessage($code)
@@ -28,6 +25,6 @@ class Response
       404 => 'Not Found',
       500 => 'Internal Server Error'
     ];
-    return (isset($statusCodes[$code])) ? $statusCodes[$code] : 'Error';
+    return $statusCodes[$code] ?? 'Unknown Status';
   }
 }
