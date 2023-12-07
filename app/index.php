@@ -30,7 +30,7 @@ $path = str_replace($basePath, '', $path);
 $routes = [
   'GET' => [
     '/api/search/' => ['controller' => 'SearchController', 'method' => 'searchProducts'],
-    '/api/products' => ['controller' => 'ProductsController', 'method' => 'index'],
+    '/api/products/' => ['controller' => 'ProductsController', 'method' => 'index'],
   ],
   'POST' => [
     '/api/auth/' => ['controller' => 'AuthController', 'method' => 'login'],
