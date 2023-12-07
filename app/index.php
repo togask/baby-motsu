@@ -9,6 +9,7 @@ require_once 'models/ProductModel.php';
 // コントローラーの読み込み
 require_once 'controllers/AuthController.php';
 require_once 'controllers/SearchController.php';
+require_once 'controllers/ProductsController.php';
 // コアの読み込み
 require_once 'core/Database.php';
 require_once 'core/Response.php';
@@ -29,6 +30,7 @@ $path = str_replace($basePath, '', $path);
 $routes = [
   'GET' => [
     '/api/search/' => ['controller' => 'SearchController', 'method' => 'searchProducts'],
+    '/api/products' => ['controller' => 'ProductsController', 'method' => 'index'],
   ],
   'POST' => [
     '/api/auth/' => ['controller' => 'AuthController', 'method' => 'login'],
