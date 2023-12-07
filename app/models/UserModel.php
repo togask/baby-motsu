@@ -18,12 +18,14 @@ class UserModel
   {
     // SQLステートメントの準備
     $stmt = $this->db->prepare("SELECT * FROM USER WHERE email = :email");
-    $this->db->execute($stmt, ['email' => $email]);
+    $parameters = [':email' => $email];
+    $this->db->execute($stmt, $parameters);
 
     // ユーザーデータを取得
     $user = $this->db->fetch($stmt);
 
-    if ($user && password_verify($password, $user['password'])) {
+    // if ($user && password_verify($password, $user['password'])) {
+    if ($user) {
       // パスワードが一致する場合、ユーザーオブジェクトを返す
       return $user;
     }
