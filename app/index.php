@@ -6,10 +6,13 @@ require_once 'models/MajorCategoryModel.php';
 require_once 'models/MinorCategoryModel.php';
 require_once 'models/ColorModel.php';
 require_once 'models/ProductModel.php';
+require_once 'models/EvaluationModel.php';
+require_once 'models/TransactionModel.php';
 // コントローラーの読み込み
 require_once 'controllers/AuthController.php';
 require_once 'controllers/SearchController.php';
 require_once 'controllers/ProductsController.php';
+require_once 'controllers/TransactionController.php';
 // コアの読み込み
 require_once 'core/Database.php';
 require_once 'core/Response.php';
@@ -31,6 +34,7 @@ $routes = [
   'GET' => [
     '/api/search/' => ['controller' => 'SearchController', 'method' => 'searchProducts'],
     '/api/products/' => ['controller' => 'ProductsController', 'method' => 'index'],
+    '/api/transactions/{transactionId}' => ['controller' => 'TransactionController', 'method' => 'getTransactionDetails'],
   ],
   'POST' => [
     '/api/auth/' => ['controller' => 'AuthController', 'method' => 'login'],
@@ -38,13 +42,20 @@ $routes = [
 ];
 
 // ルーティングのマッチングとコントローラーの呼び出し
-if (isset($routes[$method]) && array_key_exists($path, $routes[$method])) {
-  $controllerName = $routes[$method][$path]['controller'];
-  $methodName = $routes[$method][$path]['method'];
+foreach ($routes[$method] as $route => $action) {
+  $pattern = preg_replace('/{[^}]+}/', '([^/]+)', $route);
+  if (preg_match('#^' . $pattern . '$#', $path, $matches)) {
+    array_shift($matches); // フルマッチ部分を削除
 
-  $controller = new $controllerName();
-  $controller->$methodName();
-} else {
-  // 404 Not FoundレスポンスをResponseクラスを使用して送信
-  Response::sendError(404);
+    $controllerName = $action['controller'];
+    $methodName = $action['method'];
+
+    $controller = new $controllerName();
+    call_user_func_array([$controller, $methodName], $matches);
+    break;
+  }
+}
+
+if (!isset($controller)) {
+  Response::sendError(404); // ルートが見つからない場合
 }
