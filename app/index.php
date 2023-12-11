@@ -1,4 +1,8 @@
 <?php
+// CORSヘッダ
+header('Access-Control-Allow-Origin: https://aso2201373.angry.jp');
+header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
 // モデルの読み込み
 require_once 'models/UserModel.php';
 require_once 'models/CodeMasterModel.php';
