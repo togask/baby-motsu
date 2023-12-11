@@ -1,6 +1,13 @@
 <?php
 class SessionManager
 {
+  private static $db;
+
+  public static function initialize(Database $database)
+  {
+    self::$db = $database;
+  }
+
   public static function startSession()
   {
     if (session_status() == PHP_SESSION_NONE) {
@@ -8,9 +15,15 @@ class SessionManager
     }
   }
 
-  public static function checkSessionId()
+  public static function checkSessionId($userId, $sessionId)
   {
-    return isset($_SESSION['user_id']);
+    // データベースからユーザーのセッション情報を取得
+    $stmt = self::$db->prepare("SELECT session_id FROM USER WHERE user_id = :userId");
+    self::$db->execute($stmt, ['userId' => $userId]);
+    $userSession = self::$db->fetch($stmt);
+
+    // ユーザーのセッションIDが存在し、リクエストされたセッションIDと一致するか確認
+    return $userSession && $userSession['session_id'] == $sessionId;
   }
 
   public static function set($key, $value)
@@ -18,24 +31,32 @@ class SessionManager
     $_SESSION[$key] = $value;
   }
 
-  public static function get($key)
+  public static function get($key, $default = null)
   {
-    return $_SESSION[$key] ?? null;
+    if (!is_string($key)) {
+      throw new InvalidArgumentException("Invalid session key.");
+    }
+
+    return $_SESSION[$key] ?? $default;
   }
+
 
   public static function remove($key)
   {
+    if (!isset($_SESSION[$key])) {
+      // オプション: 例外をスローするか、ログに記録する
+      throw new InvalidArgumentException("Session key not found.");
+    }
+
     unset($_SESSION[$key]);
   }
 
+
   public static function destroySession()
   {
-    session_unset();
-    session_destroy();
-  }
-
-  public static function regenerateSessionId($deleteOldSession = false)
-  {
-    session_regenerate_id($deleteOldSession);
+    if (session_status() === PHP_SESSION_ACTIVE) {
+      session_unset();
+      session_destroy();
+    }
   }
 }
