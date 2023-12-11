@@ -3,9 +3,9 @@ class MinorCategoryModel
 {
   private $db;
 
-  public function __construct()
+  public function __construct(Database $database)
   {
-    $this->db = new Database();
+    $this->db = $database;
   }
 
   public function getAllMinorCategories()

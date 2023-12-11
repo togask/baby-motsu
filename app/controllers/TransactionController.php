@@ -1,11 +1,13 @@
 <?php
 class TransactionController
 {
+  private $db;
   private $transactionModel;
 
-  public function __construct()
+  public function __construct(Database $db)
   {
-    $this->transactionModel = new TransactionModel();
+    $this->db = $db;
+    $this->transactionModel = new TransactionModel($this->db);
   }
 
   public function getTransactionDetails($transactionId)
@@ -15,8 +17,14 @@ class TransactionController
     $userId = $headers['UserId'] ?? null;
     $sessionId = $headers['SessionId'] ?? null;
 
+    // ユーザーIDとセッションIDの有効性を確認
+    if ($userId === null || $sessionId === null) {
+      Response::sendError(401, "Unauthorized access.");
+      return;
+    }
+
     // セッションの検証
-    SessionManager::startSession();
+    SessionManager::startSession($userId);
     if (!SessionManager::checkSessionId($userId, $sessionId)) {
       Response::sendError(401, "Unauthorized access.");
       return;

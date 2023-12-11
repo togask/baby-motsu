@@ -1,6 +1,13 @@
 <?php
 class SearchController
 {
+  private $db;
+
+  public function __construct(Database $db)
+  {
+    $this->db = $db;
+  }
+
   public function searchProducts()
   {
     $keyword = $_GET['keyword'] ?? '';
@@ -11,7 +18,7 @@ class SearchController
     }
 
     try {
-      $productModel = new ProductModel();
+      $productModel = new ProductModel($this->db);
       $products = $productModel->searchProductsByKeyword($keyword);
 
       $formattedProducts = [];

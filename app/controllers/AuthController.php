@@ -1,6 +1,13 @@
 <?php
 class AuthController
 {
+  private $db;
+
+  public function __construct(Database $db)
+  {
+    $this->db = $db;
+  }
+
   /**
    * ログイン処理を行う
    */
@@ -16,21 +23,21 @@ class AuthController
 
     if ($user) {
       // 認証成功
-      SessionManager::startSession();
+      SessionManager::startSession($user['user_id']);
       $sessionId = session_id();
 
       // コードマスタデータの取得
-      $codeMasterModel = new CodeMasterModel();
+      $codeMasterModel = new CodeMasterModel($this->db);
       $codeMasterData = $codeMasterModel->getAllCodeMasterData();
 
       // カテゴリデータの取得
-      $majorCategoryModel = new MajorCategoryModel();
+      $majorCategoryModel = new MajorCategoryModel($this->db);
       $majorCategories = $majorCategoryModel->getAllMajorCategories();
-      $minorCategoryModel = new MinorCategoryModel();
+      $minorCategoryModel = new MinorCategoryModel($this->db);
       $minorCategories = $minorCategoryModel->getAllMinorCategories();
 
       // 色データの取得
-      $colorModel = new ColorModel();
+      $colorModel = new ColorModel($this->db);
       $colors = $colorModel->getAllColors();
 
       // レスポンスとしてユーザーID、セッションID、コードマスターデータを返す
@@ -58,7 +65,7 @@ class AuthController
   {
     try {
       // UserModelを使用してユーザーを検索
-      $userModel = new UserModel();
+      $userModel = new UserModel($this->db);
       $user =  $userModel->findByEmailAndPassword($email, $password);
       return $user;
     } catch (\PDOException $e) {

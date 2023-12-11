@@ -1,11 +1,18 @@
 <?php
 class ProductsController
 {
+  private $db;
+
+  public function __construct(Database $db)
+  {
+    $this->db = $db;
+  }
+
   public function index()
   {
     try {
       // 商品モデルのインスタンス化
-      $productModel = new ProductModel();
+      $productModel = new ProductModel($this->db);
       $products = $productModel->getAllProducts();
 
       // フォーマットされた商品情報の取得

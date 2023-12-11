@@ -8,11 +8,24 @@ class SessionManager
     self::$db = $database;
   }
 
-  public static function startSession()
+  public static function startSession($userId)
   {
+    if ($userId === null) {
+      throw new InvalidArgumentException("Invalid user ID.");
+    }
+
     if (session_status() == PHP_SESSION_NONE) {
       session_start();
     }
+
+    // セッションIDをデータベースに保存
+    self::saveSessionIdToDatabase($userId, session_id());
+  }
+
+  private static function saveSessionIdToDatabase($userId, $sessionId)
+  {
+    $stmt = self::$db->prepare("UPDATE USER SET session_id = :sessionId WHERE user_id = :userId");
+    self::$db->execute($stmt, ['sessionId' => $sessionId, 'userId' => $userId]);
   }
 
   public static function checkSessionId($userId, $sessionId)
