@@ -3,9 +3,9 @@ class TransactionController
 {
   private $transactionModel;
 
-  public function __construct(TransactionModel $transactionModel)
+  public function __construct()
   {
-    $this->transactionModel = $transactionModel;
+    $this->transactionModel = new TransactionModel();
   }
 
   public function getTransactionDetails($transactionId)

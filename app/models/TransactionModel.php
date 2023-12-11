@@ -3,9 +3,9 @@ class TransactionModel
 {
   private $db;
 
-  public function __construct(Database $db)
+  public function __construct()
   {
-    $this->db = $db;
+    $this->db = new Database();
   }
 
   public function getCompleteTransactionDetails($transactionId)

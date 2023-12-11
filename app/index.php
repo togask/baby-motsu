@@ -21,6 +21,12 @@ require_once 'core/Database.php';
 require_once 'core/Response.php';
 require_once 'core/SessionManager.php';
 
+// データベース接続の初期化
+$db = new Database();
+
+// SessionManagerの初期化
+SessionManager::initialize($db);
+
 $requestUri = $_SERVER['REQUEST_URI'];
 $method = $_SERVER['REQUEST_METHOD'];
 
