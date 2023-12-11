@@ -10,7 +10,6 @@ require_once 'models/MajorCategoryModel.php';
 require_once 'models/MinorCategoryModel.php';
 require_once 'models/ColorModel.php';
 require_once 'models/ProductModel.php';
-require_once 'models/EvaluationModel.php';
 require_once 'models/TransactionModel.php';
 // コントローラーの読み込み
 require_once 'controllers/AuthController.php';
@@ -36,12 +35,12 @@ $path = str_replace($basePath, '', $path);
 // ルーティングの定義
 $routes = [
   'GET' => [
-    '/api/search/' => ['controller' => 'SearchController', 'method' => 'searchProducts'],
-    '/api/products/' => ['controller' => 'ProductsController', 'method' => 'index'],
+    '/api/search' => ['controller' => 'SearchController', 'method' => 'searchProducts'],
+    '/api/products' => ['controller' => 'ProductsController', 'method' => 'index'],
     '/api/transactions/{transactionId}' => ['controller' => 'TransactionController', 'method' => 'getTransactionDetails'],
   ],
   'POST' => [
-    '/api/auth/' => ['controller' => 'AuthController', 'method' => 'login'],
+    '/api/auth' => ['controller' => 'AuthController', 'method' => 'login'],
   ],
 ];
 
