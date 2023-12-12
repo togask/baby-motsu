@@ -45,7 +45,7 @@ class Database
   {
     try {
       foreach ($parameters as $param => $value) {
-        $stmt->bindParam($param, $value);
+        $stmt->bindValue($param, $value);
       }
       $stmt->execute();
     } catch (PDOException $e) {
