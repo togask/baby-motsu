@@ -59,7 +59,7 @@ foreach ($routes[$method] as $route => $action) {
     $controllerName = $action['controller'];
     $methodName = $action['method'];
 
-    $controller = new $controllerName();
+    $controller = new $controllerName($db);
     call_user_func_array([$controller, $methodName], $matches);
     break;
   }
