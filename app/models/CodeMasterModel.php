@@ -16,6 +16,12 @@ class CodeMasterModel
   {
     $stmt = $this->db->prepare("SELECT * FROM CODE_MASTER");
     $this->db->execute($stmt);
-    return $this->db->fetchAll($stmt);
+    $results = $this->db->fetchAll($stmt);
+
+    foreach ($results as $key => $value) {
+      $results[$key]['isChecked'] = false;
+    }
+
+    return $results;
   }
 }
