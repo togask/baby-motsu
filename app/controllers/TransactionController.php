@@ -13,9 +13,9 @@ class TransactionController
   public function getTransactionDetails($transactionId)
   {
     // HTTPヘッダーからuserIdとsessionIdを取得
-    $headers = getallheaders();
-    $userId = $headers['UserId'] ?? null;
-    $sessionId = $headers['SessionId'] ?? null;
+    $headers = array_change_key_case(getallheaders(), CASE_LOWER);
+    $userId = $headers['userid'] ?? null;
+    $sessionId = $headers['sessionid'] ?? null;
 
     // ユーザーIDとセッションIDの有効性を確認
     if ($userId === null || $sessionId === null) {
@@ -24,7 +24,6 @@ class TransactionController
     }
 
     // セッションの検証
-    SessionManager::startSession($userId);
     if (!SessionManager::checkSessionId($userId, $sessionId)) {
       Response::sendError(401, "Unauthorized access.");
       return;
@@ -39,6 +38,13 @@ class TransactionController
 
     // isSellerの判定
     $isSeller = $transactionDetails['sellerId'] == $userId;
+    $isBuyer = $transactionDetails['buyerId'] == $userId;
+
+    if (!$isSeller && !$isBuyer) {
+      // トランザクションに関与していないユーザーのアクセスを拒否
+      Response::sendError(403, "Access denied.");
+      return;
+    }
 
     // 必要に応じて評価情報を取得
     $evaluationInfo = null;
@@ -70,7 +76,7 @@ class TransactionController
       "transactionInfo" => [
         "amount" => $transactionDetails['amount'],
         "shippingFeeResponsibility" => $transactionDetails['shippingFeeResponsibility'],
-        "date" => $transactionDetails['date'],
+        "date" => $transactionDetails['datetime'],
         "productId" => $transactionDetails['product_id']
       ],
       "buyerInfo" => $isSeller ? null : [
