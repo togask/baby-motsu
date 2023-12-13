@@ -13,7 +13,7 @@ class ProductsController
     try {
       // 商品モデルのインスタンス化
       $productModel = new ProductModel($this->db);
-      $products = $productModel->getAllProducts();
+      $products = $productModel->getAllProducts(60);
 
       // フォーマットされた商品情報の取得
       $formattedProducts = $this->formatProducts($products);
