@@ -16,7 +16,7 @@ class ProductsController
       $products = $productModel->getAllProducts(60);
 
       // フォーマットされた商品情報の取得
-      $formattedProducts = $this->formatProducts($products);
+      $formattedProducts = array_map([ProductFormatter::class, 'format'], $products);
 
       // JSONとして出力
       Response::sendJSON($formattedProducts);

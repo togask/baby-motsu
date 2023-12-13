@@ -18,6 +18,9 @@ class SessionManager
       session_start();
     }
 
+    // セッション変数にユーザーIDを設定
+    self::set('userId', $userId);
+
     // セッションIDをデータベースに保存
     self::saveSessionIdToDatabase($userId, session_id());
   }
@@ -39,6 +42,12 @@ class SessionManager
     return $userSession && $userSession['session_id'] == $sessionId;
   }
 
+  public static function isCurrentUser($userId)
+  {
+    // 現在のセッションユーザーIDを取得し、引数のユーザーIDと比較
+    return self::get('userId') == $userId;
+  }
+
   public static function set($key, $value)
   {
     $_SESSION[$key] = $value;
@@ -53,7 +62,6 @@ class SessionManager
     return $_SESSION[$key] ?? $default;
   }
 
-
   public static function remove($key)
   {
     if (!isset($_SESSION[$key])) {
@@ -63,7 +71,6 @@ class SessionManager
 
     unset($_SESSION[$key]);
   }
-
 
   public static function destroySession()
   {

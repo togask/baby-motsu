@@ -1,7 +1,7 @@
 <?php
 // CORSヘッダ
 header('Access-Control-Allow-Origin: https://aso2201373.angry.jp');
-header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE OPTIONS');
+header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 // モデルの読み込み
 require_once 'models/UserModel.php';
@@ -16,10 +16,13 @@ require_once 'controllers/AuthController.php';
 require_once 'controllers/SearchController.php';
 require_once 'controllers/ProductsController.php';
 require_once 'controllers/TransactionController.php';
+require_once 'controllers/UsersController.php';
 // コアの読み込み
 require_once 'core/Database.php';
 require_once 'core/Response.php';
 require_once 'core/SessionManager.php';
+// ヘルパーの読み込み
+require_once 'helpers/ProductFormatter.php';
 
 // データベース接続の初期化
 $db = new Database();
@@ -44,6 +47,7 @@ $routes = [
     '/api/search' => ['controller' => 'SearchController', 'method' => 'searchProducts'],
     '/api/products' => ['controller' => 'ProductsController', 'method' => 'index'],
     '/api/transactions/{transactionId}' => ['controller' => 'TransactionController', 'method' => 'getTransactionDetails'],
+    '/api/users/{userId}/mypage' => ['controller' => 'UsersController', 'method' => 'mypage'],
   ],
   'POST' => [
     '/api/auth' => ['controller' => 'AuthController', 'method' => 'login'],

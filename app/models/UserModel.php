@@ -33,4 +33,18 @@ class UserModel
     // ユーザーが見つからないか、パスワードが一致しない場合はfalseを返す
     return false;
   }
+
+  public function getUserProfile($userId)
+  {
+    $stmt = $this->db->prepare("
+    SELECT u.nickname, u.profile_image_path, u.introduce, 
+           ROUND(AVG(e.score), 1) as average_rating
+    FROM USER u
+    LEFT JOIN EVALUATION e ON u.user_id = e.evaluatee_id
+    WHERE u.user_id = :userId
+    GROUP BY u.user_id
+  ");
+    $this->db->execute($stmt, ['userId' => $userId]);
+    return $this->db->fetch($stmt);
+  }
 }
