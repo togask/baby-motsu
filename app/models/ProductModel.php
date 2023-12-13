@@ -8,6 +8,45 @@ class ProductModel
     $this->db = $database;
   }
 
+  public function getProductDetails($productId, $currentUserId)
+  {
+    $query = "
+        SELECT 
+          p.product_id, p.seller_id, p.product_name, p.product_description, p.price, p.datetime,
+          age.name as age, weight.name as weight, height.name as height,
+          major_category.major_category_id, major_category.major_category as major_category_name,
+          minor_category.minor_category_id, minor_category.minor_category as minor_category_name,
+          bland.name as bland, color.color_id, color.color as color_name, color.color_code,
+          product_condition.name as product_condition,
+          shipping_fee_responsibility.name as shipping_fee_responsibility,
+          shipping_method.name as shipping_method,
+          shipping_origin_region.name as shipping_origin_region,
+          day_to_ship.name as day_to_ship, 
+          status.name as status,
+          (CASE WHEN p.status_id = 261 THEN true ELSE false END) AS isSold,
+          COALESCE(IFNULL(:currentUserId, false) AND EXISTS(SELECT 1 FROM FAVORITE WHERE product_id = p.product_id AND user_id = :currentUserId), false) AS isLiked
+        FROM 
+          PRODUCT p
+        LEFT JOIN CODE_MASTER age ON p.age_id = age.code_id
+        LEFT JOIN CODE_MASTER weight ON p.weight_id = weight.code_id
+        LEFT JOIN CODE_MASTER height ON p.height_id = height.code_id
+        LEFT JOIN MAJOR_CATEGORY major_category ON p.major_category_id = major_category.major_category_id
+        LEFT JOIN MINOR_CATEGORY minor_category ON p.minor_category_id = minor_category.minor_category_id
+        LEFT JOIN CODE_MASTER bland ON p.bland_id = bland.code_id
+        LEFT JOIN COLOR color ON p.color_id = color.color_id
+        LEFT JOIN CODE_MASTER product_condition ON p.product_condition_id = product_condition.code_id
+        LEFT JOIN CODE_MASTER shipping_fee_responsibility ON p.shipping_fee_responsibility_id = shipping_fee_responsibility.code_id
+        LEFT JOIN CODE_MASTER shipping_method ON p.shipping_method_id = shipping_method.code_id
+        LEFT JOIN CODE_MASTER shipping_origin_region ON p.shipping_origin_region_id = shipping_origin_region.code_id
+        LEFT JOIN CODE_MASTER day_to_ship ON p.day_to_ship_id = day_to_ship.code_id
+        LEFT JOIN CODE_MASTER status ON p.status_id = status.code_id
+        WHERE p.product_id = :productId;";
+
+    $stmt = $this->db->prepare($query);
+    $this->db->execute($stmt, ['productId' => $productId, 'currentUserId' => $currentUserId ?? false]);
+    return $this->db->fetch($stmt);
+  }
+
   public function searchProductsByKeyword($keyword, $limit = null)
   {
     $query = "

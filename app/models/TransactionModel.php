@@ -8,6 +8,13 @@ class TransactionModel
     $this->db = $database;
   }
 
+  public function getTransactionByProductId($productId)
+  {
+    $stmt = $this->db->prepare("SELECT * FROM TRANSACTION WHERE product_id = :productId");
+    $this->db->execute($stmt, ['productId' => $productId]);
+    return $this->db->fetch($stmt);
+  }
+
   public function getCompleteTransactionDetails($transactionId)
   {
     $stmt = $this->db->prepare("
