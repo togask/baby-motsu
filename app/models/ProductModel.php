@@ -65,10 +65,8 @@ class ProductModel
         WHERE p.product_name LIKE :keyword
         ORDER BY p.datetime DESC";
 
-    // limitが指定されている場合は、クエリにLIMIT句を追加
-    if ($limit !== null && is_numeric($limit)) {
-      $query .= " LIMIT " . intval($limit);
-    }
+    // LIMIT句の適用
+    $this->applyLimitClause($query, $limit);
 
     $stmt = $this->db->prepare($query);
     $this->db->execute($stmt, ['keyword' => "%{$keyword}%"]);
@@ -85,13 +83,70 @@ class ProductModel
         WHERE p.seller_id = :userId
         ORDER BY p.datetime DESC";
 
-    // limitが指定されている場合は、クエリにLIMIT句を追加
-    if ($limit !== null && is_numeric($limit)) {
-      $query .= " LIMIT " . intval($limit);
-    }
+    // LIMIT句の適用
+    $this->applyLimitClause($query, $limit);
 
     $stmt = $this->db->prepare($query);
     $this->db->execute($stmt, ['userId' => $userId]);
+    return $this->db->fetchAll($stmt);
+  }
+
+  public function searchProducts($searchCriteria, $limit = null)
+  {
+    $query = "
+        SELECT p.*, pi.path AS productImagePath, 
+               (CASE WHEN p.status_id = 261 THEN true ELSE false END) AS isSold
+        FROM PRODUCT p
+        LEFT JOIN PRODUCT_IMAGE pi ON p.product_id = pi.product_id AND pi.order = 1
+        WHERE 1=1";
+
+    $parameters = [];
+
+    // 検索条件を適用
+    foreach ($searchCriteria as $key => $value) {
+      if (!empty($value)) {
+        switch ($key) {
+          case 'keyword':
+            $query .= " AND p.product_name LIKE :keyword";
+            $parameters['keyword'] = "%" . $value . "%";
+            break;
+          case 'excludeKeyword':
+            $query .= " AND p.product_name NOT LIKE :excludeKeyword";
+            $parameters['excludeKeyword'] = "%" . $value . "%";
+            break;
+          case 'age':
+          case 'weight':
+          case 'height':
+          case 'brand':
+          case 'productCondition':
+          case 'color':
+          case 'shippingFee':
+          case 'shippingMethod':
+            $placeholders = array_map(function ($i) use ($key) {
+              return ":{$key}_{$i}";
+            }, array_keys($value));
+            $query .= " AND p.{$key}_id IN (" . implode(',', $placeholders) . ")";
+            foreach ($value as $i => $val) {
+              $parameters["{$key}_{$i}"] = $val;
+            }
+            break;
+          case 'minPrice':
+            $query .= " AND p.price >= :minPrice";
+            $parameters['minPrice'] = $value;
+            break;
+          case 'maxPrice':
+            $query .= " AND p.price <= :maxPrice";
+            $parameters['maxPrice'] = $value;
+            break;
+        }
+      }
+    }
+
+    // LIMIT句の適用
+    $this->applyLimitClause($query, $limit);
+
+    $stmt = $this->db->prepare($query);
+    $this->db->execute($stmt, $parameters);
     return $this->db->fetchAll($stmt);
   }
 
@@ -104,13 +159,18 @@ class ProductModel
         LEFT JOIN PRODUCT_IMAGE pi ON p.product_id = pi.product_id AND pi.order = 1
         ORDER BY p.datetime DESC";
 
-    // limitが指定されている場合は、クエリにLIMIT句を追加
-    if ($limit !== null && is_numeric($limit)) {
-      $query .= " LIMIT " . intval($limit);
-    }
+    // LIMIT句の適用
+    $this->applyLimitClause($query, $limit);
 
     $stmt = $this->db->prepare($query);
     $this->db->execute($stmt);
     return $this->db->fetchAll($stmt);
+  }
+
+  private function applyLimitClause(&$query, $limit)
+  {
+    if ($limit !== null && is_numeric($limit)) {
+      $query .= " LIMIT " . intval($limit);
+    }
   }
 }
