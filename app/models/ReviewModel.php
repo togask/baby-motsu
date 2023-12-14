@@ -11,7 +11,7 @@ class ReviewModel
   public function getProductReviews($productId)
   {
     $stmt = $this->db->prepare("
-            SELECT r.rating, r.comment, cm.name as usageDuration
+            SELECT r.comment, cm.name as usageDuration
             FROM REVIEW r
             JOIN CODE_MASTER cm ON r.usage_duration_id = cm.code_id
             WHERE r.product_id = :productId

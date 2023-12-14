@@ -18,7 +18,7 @@ class UserModel
   {
     // SQLステートメントの準備
     $stmt = $this->db->prepare("SELECT * FROM USER WHERE email = :email");
-    $parameters = [':email' => $email];
+    $parameters = ['email' => $email];
     $this->db->execute($stmt, $parameters);
 
     // ユーザーデータを取得

@@ -51,9 +51,12 @@ class ProductsController
       // 出品者の情報を取得
       $seller = $this->userModel->getUserProfile($productDetails['seller_id']);
 
+      // 1の場合、true (ブール値) を返す
+      $isSold = $productDetails['isSold'] == 1;
+
       // isSoldがtrueの場合、isBuyerを判定
       $isBuyer = false;
-      if ($productDetails['isSold']) {
+      if ($isSold) {
         $transaction = $this->transactionModel->getTransactionByProductId($productId);
         $currentUserId = SessionManager::get('userId');
         $isBuyer = $transaction && $transaction['buyer_id'] == $currentUserId;
@@ -75,15 +78,15 @@ class ProductsController
           'brand' => $productDetails['brand'],
           'majorCategory' => [
             'id' => $productDetails['major_category_id'],
-            'name' => $productDetails['major_category']
+            'name' => $productDetails['major_category_name']
           ],
           'minorCategory' => [
             'id' => $productDetails['minor_category_id'],
-            'name' => $productDetails['minor_category']
+            'name' => $productDetails['minor_category_name']
           ],
           'color' => [
             'colorId' => $productDetails['color_id'],
-            'name' => $productDetails['color'],
+            'name' => $productDetails['color_name'],
             'colorCode' => $productDetails['color_code']
           ],
           'condition' => $productDetails['condition']
@@ -95,13 +98,12 @@ class ProductsController
           'dayToShip' => $productDetails['day_to_ship']
         ],
         'isLiked' => $productDetails['isLiked'],
-        'isSold' => $productDetails['isSold'],
+        'isSold' => $isSold,
         'isSeller' => SessionManager::isCurrentUser($productDetails['seller_id']),
         'isBuyer' => $isBuyer,
         'seller' => $seller,
         'reviews' => array_map(function ($review) {
           return [
-            'rating' => $review['rating'],
             'usageDuration' => $review['usageDuration'],
             'comment' => $review['comment']
           ];

@@ -16,15 +16,19 @@ class ProductModel
           age.name as age, weight.name as weight, height.name as height,
           major_category.major_category_id, major_category.major_category as major_category_name,
           minor_category.minor_category_id, minor_category.minor_category as minor_category_name,
-          bland.name as bland, color.color_id, color.color as color_name, color.color_code,
-          product_condition.name as product_condition,
+          brand.name as brand, color.color_id, color.color as color_name, color.color_code,
+          product_condition.name as `condition`,
           shipping_fee_responsibility.name as shipping_fee_responsibility,
           shipping_method.name as shipping_method,
           shipping_origin_region.name as shipping_origin_region,
           day_to_ship.name as day_to_ship, 
           status.name as status,
           (CASE WHEN p.status_id = 261 THEN true ELSE false END) AS isSold,
-          COALESCE(IFNULL(:currentUserId, false) AND EXISTS(SELECT 1 FROM FAVORITE WHERE product_id = p.product_id AND user_id = :currentUserId), false) AS isLiked
+          CASE 
+            WHEN :currentUserId1 IS NOT NULL 
+            THEN EXISTS(SELECT 1 FROM FAVORITE WHERE product_id = p.product_id AND user_id = :currentUserId2) 
+            ELSE false 
+          END AS isLiked
         FROM 
           PRODUCT p
         LEFT JOIN CODE_MASTER age ON p.age_id = age.code_id
@@ -32,7 +36,7 @@ class ProductModel
         LEFT JOIN CODE_MASTER height ON p.height_id = height.code_id
         LEFT JOIN MAJOR_CATEGORY major_category ON p.major_category_id = major_category.major_category_id
         LEFT JOIN MINOR_CATEGORY minor_category ON p.minor_category_id = minor_category.minor_category_id
-        LEFT JOIN CODE_MASTER bland ON p.bland_id = bland.code_id
+        LEFT JOIN CODE_MASTER brand ON p.brand_id = brand.code_id
         LEFT JOIN COLOR color ON p.color_id = color.color_id
         LEFT JOIN CODE_MASTER product_condition ON p.product_condition_id = product_condition.code_id
         LEFT JOIN CODE_MASTER shipping_fee_responsibility ON p.shipping_fee_responsibility_id = shipping_fee_responsibility.code_id
@@ -43,7 +47,11 @@ class ProductModel
         WHERE p.product_id = :productId;";
 
     $stmt = $this->db->prepare($query);
-    $this->db->execute($stmt, ['productId' => $productId, 'currentUserId' => $currentUserId ?? false]);
+    $this->db->execute($stmt, [
+      'productId' => $productId,
+      'currentUserId1' => $currentUserId ?? null,
+      'currentUserId2' => $currentUserId ?? null
+    ]);
     return $this->db->fetch($stmt);
   }
 

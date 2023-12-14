@@ -1,11 +1,6 @@
 <?php
 // CORSヘッダ
-$allowedOrigins = ['http://localhost:6006', 'https://aso2201373.angry.jp'];
-$requestOrigin = $_SERVER['HTTP_ORIGIN'];
-if (in_array($requestOrigin, $allowedOrigins)) {
-  header('Access-Control-Allow-Origin: ' . $requestOrigin);
-}
-// header('Access-Control-Allow-Origin: https://aso2201373.angry.jp');
+header('Access-Control-Allow-Origin: https://aso2201373.angry.jp');
 header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 // モデルの読み込み
@@ -15,6 +10,7 @@ require_once 'models/MajorCategoryModel.php';
 require_once 'models/MinorCategoryModel.php';
 require_once 'models/ColorModel.php';
 require_once 'models/ProductModel.php';
+require_once 'models/ProductImageModel.php';
 require_once 'models/TransactionModel.php';
 require_once 'models/ReviewModel.php';
 // コントローラーの読み込み
