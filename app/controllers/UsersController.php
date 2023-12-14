@@ -2,27 +2,27 @@
 class UsersController
 {
   private $db;
+  private $userModel;
+  private $productModel;
 
   public function __construct(Database $db)
   {
     $this->db = $db;
+    $this->userModel = new UserModel($this->db);
+    $this->productModel = new ProductModel($this->db);
   }
 
   public function mypage($userId)
   {
     try {
-      $userModel = new UserModel($this->db);
-      $productModel = new ProductModel($this->db);
-
       // ユーザープロフィールの取得
-      $userProfile = $userModel->getUserProfile($userId);
+      $userProfile = $this->userModel->getUserProfile($userId);
 
       // ユーザーが出品している商品の取得
-      $userProducts = $productModel->getProductsByUserId($userId);
-
-      $formattedProducts = array_map([ProductFormatter::class, 'format'], $userProducts);
+      $userProducts = $this->productModel->getProductsByUserId($userId);
 
       // レスポンスデータの作成
+      $formattedProducts = array_map([ProductFormatter::class, 'format'], $userProducts);
       $response = [
         'userId' => $userId,
         'isSelf' => SessionManager::isCurrentUser($userId),

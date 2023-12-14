@@ -6,6 +6,7 @@ class AuthController
   private $majorCategoryModel;
   private $minorCategoryModel;
   private $colorModel;
+  private $userModel;
 
   public function __construct(Database $db)
   {
@@ -14,6 +15,7 @@ class AuthController
     $this->majorCategoryModel = new MajorCategoryModel($this->db);
     $this->minorCategoryModel = new MinorCategoryModel($this->db);
     $this->colorModel = new ColorModel($this->db);
+    $this->userModel = new UserModel($this->db);
   }
 
   /**
@@ -30,29 +32,13 @@ class AuthController
     $user = $this->authenticateUser($email, $password);
 
     if ($user) {
+      $userId = $user['user_id'];
       // 認証成功
-      SessionManager::startSession($user['user_id']);
+      SessionManager::startSession($userId);
       $sessionId = session_id();
 
-      // コードマスタデータの取得
-      $codeMasterData = $this->codeMasterModel->getAllCodeMasterData();
-
-      // カテゴリデータの取得
-      $majorCategories = $this->majorCategoryModel->getAllMajorCategories();
-      $minorCategories = $this->minorCategoryModel->getAllMinorCategories();
-
-      // 色データの取得
-      $colors = $this->colorModel->getAllColors();
-
-      // レスポンスとしてユーザーID、セッションID、コードマスターデータを返す
-      Response::sendJSON([
-        'userId' => $user['user_id'],
-        'sessionId' => $sessionId,
-        'codeMaster' => $codeMasterData,
-        'major_category' => $majorCategories,
-        'minor_category' => $minorCategories,
-        'colors' => $colors
-      ]);
+      // その他のデータ取得とレスポンスの準備
+      $this->prepareAndSendResponse($userId, $sessionId);
     } else {
       // 認証失敗
       Response::sendError(401);
@@ -92,9 +78,8 @@ class AuthController
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
     try {
-      // UserModelを使用してユーザーを登録
-      $userModel = new UserModel($this->db);
-      $userId = $userModel->registerUser($email, $hashedPassword, $nickname);
+      // ユーザーを登録
+      $userId = $this->userModel->registerUser($email, $hashedPassword, $nickname);
 
       if ($userId) {
         // 登録成功
@@ -146,9 +131,8 @@ class AuthController
   private function authenticateUser($email, $password)
   {
     try {
-      // UserModelを使用してユーザーを検索
-      $userModel = new UserModel($this->db);
-      $user =  $userModel->findByEmailAndPassword($email, $password);
+      // ユーザーを検索
+      $user =  $this->userModel->findByEmailAndPassword($email, $password);
       return $user;
     } catch (\PDOException $e) {
       // データベースエラーのハンドリング

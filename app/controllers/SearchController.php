@@ -2,10 +2,12 @@
 class SearchController
 {
   private $db;
+  private $productModel;
 
   public function __construct(Database $db)
   {
     $this->db = $db;
+    $this->productModel = new ProductModel($this->db);
   }
 
   public function searchProducts()
@@ -18,8 +20,7 @@ class SearchController
     }
 
     try {
-      $productModel = new ProductModel($this->db);
-      $products = $productModel->searchProductsByKeyword($keyword);
+      $products = $this->productModel->searchProductsByKeyword($keyword);
 
       $formattedProducts = array_map([ProductFormatter::class, 'format'], $products);
 
