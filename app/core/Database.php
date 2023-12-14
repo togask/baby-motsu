@@ -52,7 +52,8 @@ class Database
           $stmt->bindValue($param, $value);
         }
       }
-      $stmt->execute();
+      $result = $stmt->execute();
+      return $result;
     } catch (PDOException $e) {
       // エラーハンドリング
       throw $e;
@@ -77,5 +78,10 @@ class Database
       // エラーハンドリング
       throw $e;
     }
+  }
+
+  public function lastInsertId()
+  {
+    return $this->connection->lastInsertId();
   }
 }

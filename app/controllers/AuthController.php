@@ -2,10 +2,18 @@
 class AuthController
 {
   private $db;
+  private $codeMasterModel;
+  private $majorCategoryModel;
+  private $minorCategoryModel;
+  private $colorModel;
 
   public function __construct(Database $db)
   {
     $this->db = $db;
+    $this->codeMasterModel = new CodeMasterModel($this->db);
+    $this->majorCategoryModel = new MajorCategoryModel($this->db);
+    $this->minorCategoryModel = new MinorCategoryModel($this->db);
+    $this->colorModel = new ColorModel($this->db);
   }
 
   /**
@@ -27,18 +35,14 @@ class AuthController
       $sessionId = session_id();
 
       // コードマスタデータの取得
-      $codeMasterModel = new CodeMasterModel($this->db);
-      $codeMasterData = $codeMasterModel->getAllCodeMasterData();
+      $codeMasterData = $this->codeMasterModel->getAllCodeMasterData();
 
       // カテゴリデータの取得
-      $majorCategoryModel = new MajorCategoryModel($this->db);
-      $majorCategories = $majorCategoryModel->getAllMajorCategories();
-      $minorCategoryModel = new MinorCategoryModel($this->db);
-      $minorCategories = $minorCategoryModel->getAllMinorCategories();
+      $majorCategories = $this->majorCategoryModel->getAllMajorCategories();
+      $minorCategories = $this->minorCategoryModel->getAllMinorCategories();
 
       // 色データの取得
-      $colorModel = new ColorModel($this->db);
-      $colors = $colorModel->getAllColors();
+      $colors = $this->colorModel->getAllColors();
 
       // レスポンスとしてユーザーID、セッションID、コードマスターデータを返す
       Response::sendJSON([
@@ -53,6 +57,84 @@ class AuthController
       // 認証失敗
       Response::sendError(401);
     }
+  }
+
+  /**
+   * ユーザー登録とログイン処理を行う
+   */
+  public function signup()
+  {
+    // リクエストからJSONデータを取得
+    $data = json_decode(file_get_contents('php://input'), true);
+    $email = $data['email'] ?? '';
+    $password = $data['password'] ?? '';
+    $nickname = $data['nickname'] ?? '';
+
+    // 必須フィールドの確認
+    if (!$email || !$password || !$nickname) {
+      Response::sendError(400, 'Invalid input data');
+      return;
+    }
+
+    // メールアドレスの形式の検証
+    if (!$this->validateEmail($email)) {
+      Response::sendError(400, 'Invalid email format');
+      return;
+    }
+
+    // パスワードの検証
+    if (!$this->validatePassword($password)) {
+      Response::sendError(400, 'Invalid password format');
+      return;
+    }
+
+    // パスワードをハッシュ化
+    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+    try {
+      // UserModelを使用してユーザーを登録
+      $userModel = new UserModel($this->db);
+      $userId = $userModel->registerUser($email, $hashedPassword, $nickname);
+
+      if ($userId) {
+        // 登録成功
+        // セッション開始
+        SessionManager::startSession($userId);
+        $sessionId = session_id();
+
+        // その他のデータ取得とレスポンスの準備
+        $this->prepareAndSendResponse($userId, $sessionId);
+      } else {
+        // 登録失敗（例えば、既に存在するメールアドレスなど）
+        Response::sendError(400, 'User registration failed');
+      }
+    } catch (\PDOException $e) {
+      // データベースエラーのハンドリング
+      Response::sendError(500, $e->getMessage());
+    }
+  }
+
+  private function prepareAndSendResponse($userId, $sessionId)
+  {
+    // コードマスタデータの取得
+    $codeMasterData = $this->codeMasterModel->getAllCodeMasterData();
+
+    // カテゴリデータの取得
+    $majorCategories = $this->majorCategoryModel->getAllMajorCategories();
+    $minorCategories = $this->minorCategoryModel->getAllMinorCategories();
+
+    // 色データの取得
+    $colors = $this->colorModel->getAllColors();
+
+    // レスポンスとしてユーザーID、セッションID、その他データを返す
+    Response::sendJSON([
+      'userId' => $userId,
+      'sessionId' => $sessionId,
+      'codeMaster' => $codeMasterData,
+      'major_category' => $majorCategories,
+      'minor_category' => $minorCategories,
+      'colors' => $colors
+    ]);
   }
 
   /**
@@ -72,5 +154,15 @@ class AuthController
       // データベースエラーのハンドリング
       Response::sendError(500);
     }
+  }
+
+  private function validateEmail($email)
+  {
+    return filter_var($email, FILTER_VALIDATE_EMAIL);
+  }
+
+  private function validatePassword($password)
+  {
+    return preg_match('/^[a-zA-Z0-9]+$/', $password);
   }
 }

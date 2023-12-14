@@ -54,6 +54,7 @@ $routes = [
   ],
   'POST' => [
     '/api/auth/login' => ['controller' => 'AuthController', 'method' => 'login'],
+    '/api/auth/signup' => ['controller' => 'AuthController', 'method' => 'signup'],
   ],
 ];
 
