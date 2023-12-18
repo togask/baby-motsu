@@ -55,24 +55,6 @@ class ProductModel
     return $this->db->fetch($stmt);
   }
 
-  public function searchProductsByKeyword($keyword, $limit = null)
-  {
-    $query = "
-        SELECT p.*, pi.path AS productImagePath, 
-               (CASE WHEN p.status_id = 261 THEN true ELSE false END) AS isSold
-        FROM PRODUCT p
-        LEFT JOIN PRODUCT_IMAGE pi ON p.product_id = pi.product_id AND pi.order = 1
-        WHERE p.product_name LIKE :keyword
-        ORDER BY p.datetime DESC";
-
-    // LIMIT句の適用
-    $this->applyLimitClause($query, $limit);
-
-    $stmt = $this->db->prepare($query);
-    $this->db->execute($stmt, ['keyword' => "%{$keyword}%"]);
-    return $this->db->fetchAll($stmt);
-  }
-
   public function getProductsByUserId($userId, $limit = null)
   {
     $query = "
@@ -122,6 +104,11 @@ class ProductModel
           case 'color':
           case 'shippingFee':
           case 'shippingMethod':
+            // $valueが配列であることを確認する
+            if (!is_array($value)) {
+              $value = [$value];  // 配列に変換
+            }
+
             $placeholders = array_map(function ($i) use ($key) {
               return ":{$key}_{$i}";
             }, array_keys($value));
