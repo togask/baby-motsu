@@ -169,9 +169,8 @@ entity "色" as color {
 entity "コードマスタ" as code_master {
   + code_id : コードID
   --
-  type : タイプ
-  value : 値
-  description : 説明
+  table : テーブル
+  name : ネーム
 }
 
 user "1" -- "0..*" shipping_address
